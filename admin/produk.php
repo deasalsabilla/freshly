@@ -206,7 +206,7 @@
             &copy; Copyright <strong><span>Freshly.id</span></strong>. All Rights Reserved
         </div>
         <div class="credits">
-            Designed by <a href="#" target="_blank">SecretAdmin</a>
+        Designed by <a href="https://instagram.com/meaffq/" target="_blank">Afi Qur'aini A.S</a>
         </div>
     </footer><!-- End Footer -->
 
