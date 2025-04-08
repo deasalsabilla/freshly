@@ -49,7 +49,7 @@
                 <li class="nav-item dropdown pe-3">
 
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                        <img src="assets/img/user.jpg" alt="Profile" class="rounded-circle">
+                        <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
                     </a><!-- End Profile Iamge Icon -->
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
@@ -169,11 +169,11 @@
                                         </tr>
                                         <tr>
                                             <th>Total Bayar</th>
-                                            <td>Rp. 1.500.000 </td>
+                                            <td>Rp. 32.000 </td>
                                         </tr>
                                         <tr>
                                             <th>Diskon</th>
-                                            <td>Rp. 50.000</td>
+                                            <td>Rp. 0</td>
                                         </tr>
                                     </tbody>
                                 </table>
