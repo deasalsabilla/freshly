@@ -45,8 +45,8 @@
         </div><!-- End Logo -->
 
         <div class="search-bar">
-            <form class="search-form d-flex align-items-center" method="POST" action="#">
-                <input type="text" name="query" placeholder="Search" title="Enter search keyword">
+            <form class="search-form d-flex align-items-center" method="POST" action="">
+                <input type="text" name="query" placeholder="Search" title="Enter search keyword" value="<?php echo isset($_POST['query']) ? htmlspecialchars($_POST['query']) : ''; ?>">
                 <button type="submit" title="Search"><i class="bi bi-search"></i></button>
             </form>
         </div><!-- End Search Bar -->
@@ -181,6 +181,48 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <?php
+                                    include "koneksi.php";
+                                    $no = 1;
+
+                                    // Cek apakah ada pencarian
+                                    $query = isset($_POST['query']) ? mysqli_real_escape_string($koneksi, $_POST['query']) : '';
+
+                                    // Query dasar
+                                    $sql_query = "SELECT id_ktg, nm_ktg FROM tb_ktg";
+
+                                    // Jika ada pencarian, tambahkan kondisi WHERE
+                                    if (!empty($query)) {
+                                        $sql_query .= " WHERE nm_ktg LIKE '%$query%'";
+                                    }
+
+                                    $sql = mysqli_query($koneksi, $sql_query);
+
+                                    if (mysqli_num_rows($sql) > 0) {
+                                        while ($hasil = mysqli_fetch_array($sql)) {
+                                    ?>
+                                            <tr>
+                                                <td><?php echo $no++; ?></td>
+                                                <td><?php echo $hasil['nm_ktg']; ?></td>
+                                                <td>
+                                                    <a href="e_kategori.php?id=<?php echo $hasil['id_ktg']; ?>" class="btn btn-warning">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                    </a>
+                                                    <a href="h_kategori.php?id=<?php echo $hasil['id_ktg']; ?>" class="btn btn-danger" onclick="return confirm('Apakah Anda Yakin Ingin Menghapus Data?')">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        <?php
+                                        }
+                                    } else {
+                                        ?>
+                                        <tr>
+                                            <td colspan="3" class="text-center">Belum Ada Data</td>
+                                        </tr>
+                                    <?php
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                             <!-- End Table with stripped rows -->
@@ -200,7 +242,7 @@
             &copy; Copyright <strong><span>Freshly.id</span></strong>. All Rights Reserved
         </div>
         <div class="credits">
-        Designed by <a href="https://instagram.com/meaffq/" target="_blank">Afi Qur'aini A.S</a>
+            Designed by <a href="https://instagram.com/meaffq/" target="_blank">Afi Qur'aini A.S</a>
         </div>
     </footer><!-- End Footer -->
 

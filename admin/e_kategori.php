@@ -1,3 +1,26 @@
+<?php
+include "koneksi.php";
+
+$id = $_GET['id'];
+$sql = mysqli_query($koneksi, "SELECT * FROM tb_ktg WHERE id_ktg = '$id'");
+$data = mysqli_fetch_array($sql);
+
+if (isset($_POST['simpan'])) {
+    $nm_kategori = $_POST['nm_kategori'];
+
+    $query = mysqli_query($koneksi, "UPDATE tb_ktg SET nm_ktg = '$nm_kategori' WHERE id_ktg = '$id'");
+    if ($query) {
+        echo "<script>alert('Data berhasil diubah!')</script>";
+        header("refresh:0, kategori.php");
+    } else {
+        echo "<script>alert('Data gagal diubah!')</script>";
+        header("refresh:0, kategori.php");
+    }
+}
+
+?>
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -155,7 +178,7 @@
                             <form class="row g-3 mt-2" method="post">
                                 <div class="col-12">
                                     <label for="nm_kategori" class="form-label">Nama Kategori</label>
-                                    <input type="text" class="form-control" id="nm_kategori" name="nm_kategori" placeholder="Masukkan Nama Kategori Produk">
+                                    <input type="text" class="form-control" id="nm_kategori" name="nm_kategori" placeholder="Masukkan Nama Kategori Produk" value="<?php echo $data['nm_ktg']; ?>">
                                 </div>
                                 <div class="text-center">
                                     <button type="reset" class="btn btn-secondary">Reset</button>
