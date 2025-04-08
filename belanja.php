@@ -18,6 +18,20 @@
     <link rel="stylesheet" href="assets/css/slick.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/main-color.css">
+    `<style>
+        .login-button a {
+            font-weight: 600;
+            color: #347928;
+            border: 1px solid #347928;
+            transition: all 0.3s ease;
+        }
+
+        .login-button a:hover {
+            background-color: #347928;
+            color: #fff;
+            text-decoration: none;
+        }
+    </style>`
 </head>
 
 <body class="biolife-body">
@@ -38,11 +52,11 @@
         <div class="header-middle biolife-sticky-object ">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-3 col-md-2 col-md-6 col-xs-6">
+                    <div class="col-lg-3 col-md-3 col-6 d-flex align-items-center">
                         <a href="index.php" class="biolife-logo"><img src="assets/images/favicon.png"
                                 alt="biolife logo"><b style="font-size: 190% ; color: black;">Freshly.id</b></a>
                     </div>
-                    <div class="col-lg-6 col-md-7 hidden-sm hidden-xs">
+                    <div class="col-lg-6 col-md-6 d-none d-md-block text-center">
                         <div class="primary-menu">
                             <ul>
                                 <li class="menu-item"><a href="index.php">Beranda</a></li>
@@ -53,7 +67,7 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-3 col-md-6 col-xs-6">
+                    <div class="col-lg-3 col-md-3 col-6 d-flex justify-content-end align-items-center">
                         <div class="biolife-cart-info">
                             <div class="mobile-search">
                                 <a href="javascript:void(0)" class="open-searchbox"><i class="biolife-icon icon-search"></i></a>
@@ -238,6 +252,9 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="login-button">
+                                <a href="login.php" class="btn btn-sm btn-outline-primary" style="padding: 6px 15px; border-radius: 20px;">Login</a>
                             </div>
                             <div class="mobile-menu-toggle">
                                 <a class="btn-toggle" data-object="open-mobile-menu" href="javascript:void(0)">
@@ -529,7 +546,7 @@
                         </div>
                         <div class="live-info">
                             <p class="telephone"><i class="fa fa-phone" aria-hidden="true"></i><b
-                                    class="phone-number">(+62) 81215008533</b></p>
+                                    class="phone-number">081215008533</b></p>
                             <p class="working-time">Sen-Jum: 8:30am-7:30pm; Sab-Min: 9:30am-4:30pm</p>
                         </div>
                     </div>
@@ -560,71 +577,6 @@
                 <div id="main-content" class="main-content col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="product-category list-style">
                         <div id="top-functions-area" class="top-functions-area">
-                            <div class="flt-item to-left group-on-mobile">
-                                <span class="flt-title">Refine</span>
-                                <a href="#" class="icon-for-mobile">
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                </a>
-                                <div class="wrap-selectors">
-                                    <form action="#" name="frm-refine" method="get">
-                                        <span class="title-for-mobile">Refine Products By</span>
-                                        <div data-title="Price:" class="selector-item">
-                                            <select name="price" class="selector">
-                                                <option value="all">Price</option>
-                                                <option value="class-1st">Less than 5$</option>
-                                                <option value="class-2nd">$5-10$</option>
-                                                <option value="class-3rd">$10-20$</option>
-                                                <option value="class-4th">$20-45$</option>
-                                                <option value="class-5th">$45-100$</option>
-                                                <option value="class-6th">$100-150$</option>
-                                                <option value="class-7th">More than 150$</option>
-                                            </select>
-                                        </div>
-                                        <div data-title="Brand:" class="selector-item">
-                                            <select name="brad" class="selector">
-                                                <option value="all">Top brands</option>
-                                                <option value="br2">Brand first</option>
-                                                <option value="br3">Brand second</option>
-                                                <option value="br4">Brand third</option>
-                                                <option value="br5">Brand fourth</option>
-                                                <option value="br6">Brand fiveth</option>
-                                            </select>
-                                        </div>
-                                        <div data-title="Avalability:" class="selector-item">
-                                            <select name="ability" class="selector">
-                                                <option value="all">Availability</option>
-                                                <option value="vl2">Availability 1</option>
-                                                <option value="vl3">Availability 2</option>
-                                                <option value="vl4">Availability 3</option>
-                                                <option value="vl5">Availability 4</option>
-                                                <option value="vl6">Availability 5</option>
-                                            </select>
-                                        </div>
-                                        <p class="btn-for-mobile"><button type="submit" class="btn-submit">Go</button></p>
-                                    </form>
-                                </div>
-                            </div>
-                            <div class="flt-item to-right">
-                                <span class="flt-title">Sort</span>
-                                <div class="wrap-selectors">
-                                    <div class="selector-item orderby-selector">
-                                        <select name="orderby" class="orderby" aria-label="Shop order">
-                                            <option value="menu_order" selected="selected">Default sorting</option>
-                                            <option value="popularity">popularity</option>
-                                            <option value="rating">average rating</option>
-                                            <option value="date">newness</option>
-                                            <option value="price">price: low to high</option>
-                                            <option value="price-desc">price: high to low</option>
-                                        </select>
-                                    </div>
-                                    <div class="selector-item viewmode-selector">
-                                        <a href="category-grid-left-sidebar.html" class="viewmode grid-mode"><i class="biolife-icon icon-grid"></i></a>
-                                        <a href="category-list-left-sidebar.html" class="viewmode detail-mode active"><i class="biolife-icon icon-list"></i></a>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
                         <div class="row">
@@ -814,20 +766,20 @@
                 <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-9">
                         <section class="footer-item">
-                        <a href="index.php" class="biolife-logo"><img src="assets/images/favicon.png"
-                        alt="biolife logo"><b style="font-size: 190% ; color: black;">Freshly.id</b></a>
+                            <a href="index.php" class="biolife-logo"><img src="assets/images/favicon.png"
+                                    alt="biolife logo"><b style="font-size: 190% ; color: black;">Freshly.id</b></a>
                             <div class="footer-phone-info">
                                 <i class="biolife-icon icon-head-phone"></i>
                                 <p class="r-info">
                                     <span>Ada Pertanyaan ?</span>
-                                    <span>(+62)  812-1500-8533</span>
+                                    <span>0812-1500-8533</span>
                                 </p>
                             </div>
                         </section>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-6 md-margin-top-5px sm-margin-top-50px xs-margin-top-40px">
                         <section class="footer-item">
-                            
+
                         </section>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-6 md-margin-top-5px sm-margin-top-50px xs-margin-top-40px">
@@ -844,7 +796,7 @@
                                     <li>
                                         <p class="info-item">
                                             <i class="biolife-icon icon-phone"></i>
-                                            <b class="desc">Telepon: (+62) 812-1500-8533</b>
+                                            <b class="desc">Telepon: 0812-1500-8533</b>
                                         </p>
                                     </li>
                                     <li>
@@ -856,7 +808,7 @@
                                     <li>
                                         <p class="info-item">
                                             <i class="biolife-icon icon-clock"></i>
-                                            <b class="desc">Jam Buka: Seminggu, Mulai Pukul 08:00</b>
+                                            <b class="desc">Jam Buka: Setiap hari, Mulai Pukul 08:00</b>
                                         </p>
                                     </li>
                                 </ul>
