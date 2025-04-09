@@ -39,7 +39,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-3 col-md-3 col-6 d-flex align-items-center">
-                        <a href="login.php" class="biolife-logo"><img src="assets/images/favicon.png"
+                        <a href="register.php" class="biolife-logo"><img src="assets/images/favicon.png"
                                 alt="biolife logo"><b style="font-size: 190% ; color: black;">Freshly.id</b></a>
                     </div>
                     <div class="col-lg-6 col-md-6 d-none d-md-block text-center">
