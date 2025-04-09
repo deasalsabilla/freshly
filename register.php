@@ -45,7 +45,7 @@
                     <div class="col-lg-6 col-md-6 d-none d-md-block text-center">
                         <div class="primary-menu">
                             <ul>
-                                <li class="menu-item"><a href="login.php">Register</a></li>
+                                <li class="menu-item"><a href="register.php">Register</a></li>
                             </ul>
                         </div>
                     </div>
