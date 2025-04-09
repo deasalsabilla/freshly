@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login - Freshly.id</title>
+    <title>Register - Freshly.id</title>
     <link href="https://fonts.googleapis.com/css?family=Cairo:400,600,700&amp;display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins:600&amp;display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400i,700i" rel="stylesheet">
@@ -45,7 +45,7 @@
                     <div class="col-lg-6 col-md-6 d-none d-md-block text-center">
                         <div class="primary-menu">
                             <ul>
-                                <li class="menu-item"><a href="login.php">Login</a></li>
+                                <li class="menu-item"><a href="login.php">Register</a></li>
                             </ul>
                         </div>
                     </div>
@@ -67,7 +67,7 @@
 
     <!--Hero Section-->
     <div class="hero-section hero-background">
-        <h1 class="page-title">Login</h1>
+        <h1 class="page-title">Register</h1>
     </div>
 
     <!--Navigation section-->
@@ -96,9 +96,12 @@
                                     <label for="fid-pass">Password:<span class="requite">*</span></label>
                                     <input type="email" id="fid-pass" name="email" value="" class="txt-input">
                                 </p>
+                                <p class="form-row">
+                                    <label for="fid-pass">Konfirmasi Password:<span class="requite">*</span></label>
+                                    <input type="email" id="fid-pass" name="email" value="" class="txt-input">
+                                </p>
                                 <p class="form-row wrap-btn">
-                                    <button class="btn btn-submit btn-bold" type="submit">Masuk</button>
-                                    <a href="#" class="link-to-help">Lupa password?</a>
+                                    <button class="btn btn-submit btn-bold" type="submit">Daftar Sekarang</button>
                                 </p>
                             </form>
                         </div>
@@ -108,17 +111,18 @@
                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                         <div class="register-in-container">
                             <div class="intro">
-                                <h4 class="box-title">Pengguna Baru?</h4>
-                                <p class="sub-title">Buat akun dengan Freshly.id! dan Anda akan dapat:</p>
+                                <h4 class="box-title">Sudah Punya Akun di Freshly.id?</h4>
+                                <p class="sub-title">Masuk untuk menikmati berbagai kemudahan berikut:</p>
                                 <ul class="lis">
-                                    <li>Check out lebih cepat</li>
-                                    <li>Hemat banyak biaya pengiriman</li>
-                                    <li>Akses riwayat pesanan Anda</li>
-                                    <li>Lacak pesanan baru</li>
-                                    <li>Simpan item ke Daftar Keinginan Anda</li>
+                                    <li>Proses checkout lebih cepat</li>
+                                    <li>Pengiriman yang lebih efisien</li>
+                                    <li>Akses ke riwayat dan status pesanan</li>
+                                    <li>Lacak pengiriman terbaru Anda</li>
+                                    <li>Kelola Daftar Keinginan Anda dengan mudah</li>
                                 </ul>
-                                <a href="register.php" class="btn btn-bold">Buat Akun</a>
+                                <a href="login.php" class="btn btn-bold">Masuk Sekarang</a>
                             </div>
+
                         </div>
                     </div>
 
