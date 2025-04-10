@@ -1,3 +1,58 @@
+<?php
+    include 'admin/koneksi.php';
+
+    // Pastikan ada parameter id_produk yang dikirim dari URL
+    $id_produk = isset($_GET['id']) ? mysqli_real_escape_string($koneksi, $_GET['id']) : '';
+
+    $query = "SELECT p.nm_produk, p.harga, p.stok, p.ket, p.gambar, k.nm_ktg 
+          FROM tb_produk p
+          JOIN tb_ktg k ON p.id_ktg = k.id_ktg
+          WHERE p.id_produk = '$id_produk'";
+
+    $result = $koneksi->query($query);
+    $produk = $result->fetch_assoc();
+
+    // Tambahkan pesanan ke database
+    if (isset($_POST['add_to_cart'])) {
+        if (!isset($_SESSION['login'])) {
+            echo "<script>alert('Silakan login terlebih dahulu!'); window.location.href='login.php';</script>";
+        } else {
+            $id_user = $_SESSION['id_user'];
+            $qty = intval($_POST['qty']);
+            $total = $produk['harga'] * $qty;
+
+            // Cek stok langsung dari database (lebih aman)
+            $cek_stok = $koneksi->query("SELECT stok FROM tb_produk WHERE id_produk = '$id_produk'");
+            $data_stok = $cek_stok->fetch_assoc();
+
+            if ($qty > $data_stok['stok']) {
+                echo "<script>alert('Stok tidak mencukupi! Stok tersedia: {$data_stok['stok']}');</script>";
+            } else {
+                // Buat id_pesanan otomatis dengan format M001, M002, dst.
+                $query_id = "SELECT id_pesanan FROM tb_pesanan ORDER BY id_pesanan DESC LIMIT 1";
+                $result_id = $koneksi->query($query_id);
+                if ($result_id->num_rows > 0) {
+                    $row = $result_id->fetch_assoc();
+                    $last_id = intval(substr($row['id_pesanan'], 1)); // Ambil angka dari id terakhir
+                    $new_id = "M" . str_pad($last_id + 1, 3, '0', STR_PAD_LEFT); // Format M001, M002
+                } else {
+                    $new_id = "M001"; // Jika belum ada pesanan, mulai dari M001
+                }
+
+                // Simpan ke database
+                $query_insert = "INSERT INTO tb_pesanan (id_pesanan, id_produk, qty, total, id_user) 
+                             VALUES ('$new_id', '$id_produk', '$qty', '$total', '$id_user')";
+
+                if ($koneksi->query($query_insert) === TRUE) {
+                    echo "<script>alert('Produk berhasil ditambahkan ke keranjang!'); window.location.href='belanja.php';</script>";
+                } else {
+                    echo "<script>alert('Terjadi kesalahan saat menambahkan ke keranjang!');</script>";
+                }
+            }
+        }
+    }
+    ?>
+
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 
@@ -276,15 +331,15 @@
                 <div class="sumary-product single-layout">
                     <div class="media">
                         <ul class="biolife-carousel slider-for" data-slick='{"arrows":false,"dots":false,"slidesMargin":30,"slidesToShow":1,"slidesToScroll":1,"fade":true,"asNavFor":".slider-nav"}'>
-                            <li><img src="assets/images/details-product/p01.jpg" alt="" width="500" height="500"></li>
+                            <li><img src="admin/produk_img/<?php echo $produk['gambar']; ?>" alt="" width="500" height="500"></li>
                         </ul>
                     </div>
                     <div class="product-attribute">
-                        <h3 class="title">Ubi Madu Manis</h3>
-                        <span class="sku">Umbi-Umbian</span>
-                        <p class="excerpt">Ubi Export dari China, Berkualitas tinggi dengan rasa manis yang khas</p>
+                        <h3 class="title"><?php echo $produk['nm_produk']; ?></h3>
+                        <span class="sku"><?php echo $produk['nm_ktg']; ?></span>
+                        <p class="excerpt"><?php echo nl2br($produk['ket']); ?></p>
                         <div class="price">
-                            <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>30.000</span></ins>
+                            <ins><span class="price-amount"><span class="currencySymbol">Rp.</span><?php echo number_format($produk['harga'], 0, ',', '.'); ?></span></ins>
                         </div>
                         <div class="shipping-info">
                         </div>
@@ -326,13 +381,13 @@
                     </div>
                     <div class="tab-content">
                         <div id="tab_1st" class="tab-contain desc-tab active">
-                            <p class="desc">Ubi impor dari China, Berkualitas tinggi dengan rasa manis yang khas</p>
+                            <p class="desc"><?php echo nl2br($produk['ket']); ?></p>
                         </div>
                         <div id="tab_2nd" class="tab-contain addtional-info-tab">
                             <table class="tbl_attributes">
                                 <tbody>
                                     <tr>
-                                        <th>100</th>
+                                        <th><?php echo $produk['stok']; ?></th>
                                         <td>
                                             <p>Kg</p>
                                         </td>
