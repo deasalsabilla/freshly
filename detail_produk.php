@@ -1,57 +1,66 @@
 <?php
-    include 'admin/koneksi.php';
+include 'admin/koneksi.php';
 
-    // Pastikan ada parameter id_produk yang dikirim dari URL
-    $id_produk = isset($_GET['id']) ? mysqli_real_escape_string($koneksi, $_GET['id']) : '';
+// Pastikan ada parameter id_produk yang dikirim dari URL
+$id_produk = isset($_GET['id']) ? mysqli_real_escape_string($koneksi, $_GET['id']) : '';
 
-    $query = "SELECT p.nm_produk, p.harga, p.stok, p.ket, p.gambar, k.nm_ktg 
+$query = "SELECT p.nm_produk, p.harga, p.stok, p.ket, p.gambar, k.nm_ktg 
           FROM tb_produk p
           JOIN tb_ktg k ON p.id_ktg = k.id_ktg
           WHERE p.id_produk = '$id_produk'";
 
-    $result = $koneksi->query($query);
-    $produk = $result->fetch_assoc();
+$result = $koneksi->query($query);
+$produk = $result->fetch_assoc();
 
-    // Tambahkan pesanan ke database
-    if (isset($_POST['add_to_cart'])) {
-        if (!isset($_SESSION['login'])) {
-            echo "<script>alert('Silakan login terlebih dahulu!'); window.location.href='login.php';</script>";
+// Query untuk produk lain selain produk yang sedang dibuka
+$query_lainnya = "SELECT id_produk, nm_produk, ket, harga, gambar, (SELECT nm_ktg FROM tb_ktg WHERE tb_ktg.id_ktg = p.id_ktg) as kategori 
+                  FROM tb_produk p
+                  WHERE id_produk != '$id_produk'
+                  ORDER BY RAND()
+                  LIMIT 6"; // batasi sesuai kebutuhan
+
+$result_lainnya = $koneksi->query($query_lainnya);
+
+// Tambahkan pesanan ke database
+if (isset($_POST['add_to_cart'])) {
+    if (!isset($_SESSION['login'])) {
+        echo "<script>alert('Silakan login terlebih dahulu!'); window.location.href='login.php';</script>";
+    } else {
+        $id_user = $_SESSION['id_user'];
+        $qty = intval($_POST['qty']);
+        $total = $produk['harga'] * $qty;
+
+        // Cek stok langsung dari database (lebih aman)
+        $cek_stok = $koneksi->query("SELECT stok FROM tb_produk WHERE id_produk = '$id_produk'");
+        $data_stok = $cek_stok->fetch_assoc();
+
+        if ($qty > $data_stok['stok']) {
+            echo "<script>alert('Stok tidak mencukupi! Stok tersedia: {$data_stok['stok']}');</script>";
         } else {
-            $id_user = $_SESSION['id_user'];
-            $qty = intval($_POST['qty']);
-            $total = $produk['harga'] * $qty;
-
-            // Cek stok langsung dari database (lebih aman)
-            $cek_stok = $koneksi->query("SELECT stok FROM tb_produk WHERE id_produk = '$id_produk'");
-            $data_stok = $cek_stok->fetch_assoc();
-
-            if ($qty > $data_stok['stok']) {
-                echo "<script>alert('Stok tidak mencukupi! Stok tersedia: {$data_stok['stok']}');</script>";
+            // Buat id_pesanan otomatis dengan format M001, M002, dst.
+            $query_id = "SELECT id_pesanan FROM tb_pesanan ORDER BY id_pesanan DESC LIMIT 1";
+            $result_id = $koneksi->query($query_id);
+            if ($result_id->num_rows > 0) {
+                $row = $result_id->fetch_assoc();
+                $last_id = intval(substr($row['id_pesanan'], 1)); // Ambil angka dari id terakhir
+                $new_id = "M" . str_pad($last_id + 1, 3, '0', STR_PAD_LEFT); // Format M001, M002
             } else {
-                // Buat id_pesanan otomatis dengan format M001, M002, dst.
-                $query_id = "SELECT id_pesanan FROM tb_pesanan ORDER BY id_pesanan DESC LIMIT 1";
-                $result_id = $koneksi->query($query_id);
-                if ($result_id->num_rows > 0) {
-                    $row = $result_id->fetch_assoc();
-                    $last_id = intval(substr($row['id_pesanan'], 1)); // Ambil angka dari id terakhir
-                    $new_id = "M" . str_pad($last_id + 1, 3, '0', STR_PAD_LEFT); // Format M001, M002
-                } else {
-                    $new_id = "M001"; // Jika belum ada pesanan, mulai dari M001
-                }
+                $new_id = "M001"; // Jika belum ada pesanan, mulai dari M001
+            }
 
-                // Simpan ke database
-                $query_insert = "INSERT INTO tb_pesanan (id_pesanan, id_produk, qty, total, id_user) 
+            // Simpan ke database
+            $query_insert = "INSERT INTO tb_pesanan (id_pesanan, id_produk, qty, total, id_user) 
                              VALUES ('$new_id', '$id_produk', '$qty', '$total', '$id_user')";
 
-                if ($koneksi->query($query_insert) === TRUE) {
-                    echo "<script>alert('Produk berhasil ditambahkan ke keranjang!'); window.location.href='belanja.php';</script>";
-                } else {
-                    echo "<script>alert('Terjadi kesalahan saat menambahkan ke keranjang!');</script>";
-                }
+            if ($koneksi->query($query_insert) === TRUE) {
+                echo "<script>alert('Produk berhasil ditambahkan ke keranjang!'); window.location.href='belanja.php';</script>";
+            } else {
+                echo "<script>alert('Terjadi kesalahan saat menambahkan ke keranjang!');</script>";
             }
         }
     }
-    ?>
+}
+?>
 
 <!DOCTYPE html>
 <html class="no-js" lang="en">
@@ -108,8 +117,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-3 col-md-3 col-6 d-flex align-items-center">
-                        <a href="index.php" class="biolife-logo"><img src="assets/images/favicon.png"
-                                alt="biolife logo"><b style="font-size: 190% ; color: black;">Freshly.id</b></a>
+                        <a href="index.php" class="biolife-logo"><img src="assets/images/favicon.png" alt="biolife logo"><b style="font-size: 190% ; color: black;">Freshly.id</b></a>
                     </div>
                     <div class="col-lg-6 col-md-6 d-none d-md-block text-center">
                         <div class="primary-menu">
@@ -142,140 +150,105 @@
                                                 <li>
                                                     <div class="minicart-item">
                                                         <div class="thumb">
-                                                            <a href="#"><img src="assets/images/minicart/pr-01.jpg"
-                                                                    width="90" height="90" alt="National Fresh"></a>
+                                                            <a href="#"><img src="assets/images/minicart/pr-01.jpg" width="90" height="90" alt="National Fresh"></a>
                                                         </div>
                                                         <div class="left-info">
-                                                            <div class="product-title"><a href="#"
-                                                                    class="product-name">Alpukat</a></div>
+                                                            <div class="product-title"><a href="#" class="product-name">Alpukat</a></div>
                                                             <div class="price">
-                                                                <ins><span class="price-amount"><span
-                                                                            class="currencySymbol">Rp.</span>18.000</span></ins>
+                                                                <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>18.000</span></ins>
                                                             </div>
                                                             <div class="qty">
                                                                 <label for="cart[id123][qty]">Qty:</label>
-                                                                <input type="number" class="input-qty"
-                                                                    name="cart[id123][qty]" id="cart[id123][qty]"
-                                                                    value="1" disabled>
+                                                                <input type="number" class="input-qty" name="cart[id123][qty]" id="cart[id123][qty]" value="1" disabled>
                                                             </div>
                                                         </div>
                                                         <div class="action">
-                                                            <a href="#" class="edit"><i class="fa fa-pencil"
-                                                                    aria-hidden="true"></i></a>
-                                                            <a href="#" class="remove"><i class="fa fa-trash-o"
-                                                                    aria-hidden="true"></i></a>
+                                                            <a href="#" class="edit"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                                            <a href="#" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
                                                         </div>
                                                     </div>
                                                 </li>
                                                 <li>
                                                     <div class="minicart-item">
                                                         <div class="thumb">
-                                                            <a href="#"><img src="assets/images/minicart/pr-02.jpg"
-                                                                    width="90" height="90" alt="National Fresh"></a>
+                                                            <a href="#"><img src="assets/images/minicart/pr-02.jpg" width="90" height="90" alt="National Fresh"></a>
                                                         </div>
                                                         <div class="left-info">
-                                                            <div class="product-title"><a href="#"
-                                                                    class="product-name">Apel</a></div>
+                                                            <div class="product-title"><a href="#" class="product-name">Apel</a></div>
                                                             <div class="price">
-                                                                <ins><span class="price-amount"><span
-                                                                            class="currencySymbol">Rp.</span>10.000</span></ins>
+                                                                <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>10.000</span></ins>
                                                             </div>
                                                             <div class="qty">
                                                                 <label for="cart[id124][qty]">Qty:</label>
-                                                                <input type="number" class="input-qty"
-                                                                    name="cart[id124][qty]" id="cart[id124][qty]"
-                                                                    value="1" disabled>
+                                                                <input type="number" class="input-qty" name="cart[id124][qty]" id="cart[id124][qty]" value="1" disabled>
                                                             </div>
                                                         </div>
                                                         <div class="action">
-                                                            <a href="#" class="edit"><i class="fa fa-pencil"
-                                                                    aria-hidden="true"></i></a>
-                                                            <a href="#" class="remove"><i class="fa fa-trash-o"
-                                                                    aria-hidden="true"></i></a>
+                                                            <a href="#" class="edit"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                                            <a href="#" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
                                                         </div>
                                                     </div>
                                                 </li>
                                                 <li>
                                                     <div class="minicart-item">
                                                         <div class="thumb">
-                                                            <a href="#"><img src="assets/images/minicart/pr-03.jpg"
-                                                                    width="90" height="90" alt="National Fresh"></a>
+                                                            <a href="#"><img src="assets/images/minicart/pr-03.jpg" width="90" height="90" alt="National Fresh"></a>
                                                         </div>
                                                         <div class="left-info">
-                                                            <div class="product-title"><a href="#"
-                                                                    class="product-name">Brokoli</a></div>
+                                                            <div class="product-title"><a href="#" class="product-name">Brokoli</a></div>
                                                             <div class="price">
-                                                                <ins><span class="price-amount"><span
-                                                                            class="currencySymbol">Rp.</span>15.000</span></ins>
+                                                                <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>15.000</span></ins>
                                                             </div>
                                                             <div class="qty">
                                                                 <label for="cart[id125][qty]">Qty:</label>
-                                                                <input type="number" class="input-qty"
-                                                                    name="cart[id125][qty]" id="cart[id125][qty]"
-                                                                    value="1" disabled>
+                                                                <input type="number" class="input-qty" name="cart[id125][qty]" id="cart[id125][qty]" value="1" disabled>
                                                             </div>
                                                         </div>
                                                         <div class="action">
-                                                            <a href="#" class="edit"><i class="fa fa-pencil"
-                                                                    aria-hidden="true"></i></a>
-                                                            <a href="#" class="remove"><i class="fa fa-trash-o"
-                                                                    aria-hidden="true"></i></a>
+                                                            <a href="#" class="edit"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                                            <a href="#" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
                                                         </div>
                                                     </div>
                                                 </li>
                                                 <li>
                                                     <div class="minicart-item">
                                                         <div class="thumb">
-                                                            <a href="#"><img src="assets/images/minicart/pr-04.jpg"
-                                                                    width="90" height="90" alt="National Fresh"></a>
+                                                            <a href="#"><img src="assets/images/minicart/pr-04.jpg" width="90" height="90" alt="National Fresh"></a>
                                                         </div>
                                                         <div class="left-info">
-                                                            <div class="product-title"><a href="#"
-                                                                    class="product-name">Lemon</a></div>
+                                                            <div class="product-title"><a href="#" class="product-name">Lemon</a></div>
                                                             <div class="price">
-                                                                <ins><span class="price-amount"><span
-                                                                            class="currencySymbol">Rp.</span>10.000</span></ins>
+                                                                <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>10.000</span></ins>
                                                             </div>
                                                             <div class="qty">
                                                                 <label for="cart[id126][qty]">Qty:</label>
-                                                                <input type="number" class="input-qty"
-                                                                    name="cart[id126][qty]" id="cart[id126][qty]"
-                                                                    value="1" disabled>
+                                                                <input type="number" class="input-qty" name="cart[id126][qty]" id="cart[id126][qty]" value="1" disabled>
                                                             </div>
                                                         </div>
                                                         <div class="action">
-                                                            <a href="#" class="edit"><i class="fa fa-pencil"
-                                                                    aria-hidden="true"></i></a>
-                                                            <a href="#" class="remove"><i class="fa fa-trash-o"
-                                                                    aria-hidden="true"></i></a>
+                                                            <a href="#" class="edit"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                                            <a href="#" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
                                                         </div>
                                                     </div>
                                                 </li>
                                                 <li>
                                                     <div class="minicart-item">
                                                         <div class="thumb">
-                                                            <a href="#"><img src="assets/images/minicart/pr-05.jpg"
-                                                                    width="90" height="90" alt="National Fresh"></a>
+                                                            <a href="#"><img src="assets/images/minicart/pr-05.jpg" width="90" height="90" alt="National Fresh"></a>
                                                         </div>
                                                         <div class="left-info">
-                                                            <div class="product-title"><a href="#"
-                                                                    class="product-name">Ceri</a></div>
+                                                            <div class="product-title"><a href="#" class="product-name">Ceri</a></div>
                                                             <div class="price">
-                                                                <ins><span class="price-amount"><span
-                                                                            class="currencySymbol">Rp.</span>20.000</span></ins>
+                                                                <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>20.000</span></ins>
                                                             </div>
                                                             <div class="qty">
                                                                 <label for="cart[id127][qty]">Qty:</label>
-                                                                <input type="number" class="input-qty"
-                                                                    name="cart[id127][qty]" id="cart[id127][qty]"
-                                                                    value="1" disabled>
+                                                                <input type="number" class="input-qty" name="cart[id127][qty]" id="cart[id127][qty]" value="1" disabled>
                                                             </div>
                                                         </div>
                                                         <div class="action">
-                                                            <a href="#" class="edit"><i class="fa fa-pencil"
-                                                                    aria-hidden="true"></i></a>
-                                                            <a href="#" class="remove"><i class="fa fa-trash-o"
-                                                                    aria-hidden="true"></i></a>
+                                                            <a href="#" class="edit"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                                            <a href="#" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -407,205 +380,34 @@
                     </div>
                     <ul class="products-list biolife-carousel nav-center-02 nav-none-on-mobile" data-slick='{"rows":1,"arrows":true,"dots":false,"infinite":false,"speed":400,"slidesMargin":0,"slidesToShow":5, "responsive":[{"breakpoint":1200, "settings":{ "slidesToShow": 4}},{"breakpoint":992, "settings":{ "slidesToShow": 3, "slidesMargin":20 }},{"breakpoint":768, "settings":{ "slidesToShow": 2, "slidesMargin":10}}]}'>
 
-                        <li class="product-item">
-                            <div class="contain-product layout-default">
-                                <div class="product-thumb">
-                                    <a href="#" class="link-to-product">
-                                        <img src="assets/images/products/p-13.jpg" alt="dd" width="270" height="270" class="product-thumnail">
-                                    </a>
-                                </div>
-                                <div class="info">
-                                    <b class="categories">Buah</b>
-                                    <h4 class="product-title"><a href="#" class="pr-name">Plum Kuning</a></h4>
-                                    <div class="price">
-                                        <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>45.000</span></ins>
+                        <?php while ($produk_lain = $result_lainnya->fetch_assoc()) : ?>
+                            <li class="product-item">
+                                <div class="contain-product layout-default">
+                                    <div class="product-thumb">
+                                        <a href="detail_produk.php?id=<?= $produk_lain['id_produk']; ?>" class="link-to-product">
+                                            <img src="admin/produk_img/<?= $produk_lain['gambar']; ?>" alt="<?= $produk_lain['nm_produk']; ?>" width="270" height="270" class="product-thumnail">
+                                        </a>
                                     </div>
-                                    <div class="slide-down-box">
-                                        <p class="message">Semua produk dipilih dengan cermat untuk memastikan keamanan pangan.</p>
-                                        <div class="buttons">
-                                            <a href="detail_produk.php" class="btn add-to-cart-btn"><i class="fa fa-cart-arrow-down" aria-hidden="true"></i>Keranjang</a></i></a>
+                                    <div class="info">
+                                        <b class="categories"><?= $produk_lain['kategori']; ?></b>
+                                        <h4 class="product-title"><a href="detail_produk.php?id=<?= $produk_lain['id_produk']; ?>" class="pr-name"><?= $produk_lain['nm_produk']; ?></a></h4>
+                                        <div class="price">
+                                            <ins><span class="price-amount"><span class="currencySymbol">Rp.</span><?= number_format($produk_lain['harga'], 0, ',', '.'); ?></span></ins>
+                                        </div>
+                                        <div class="slide-down-box">
+                                            <p class="message"><?= $produk_lain['ket']; ?></p>
+                                            <div class="buttons">
+                                                <a href="detail_produk.php?id=<?= $produk_lain['id_produk']; ?>" class="btn add-to-cart-btn">
+                                                    <i class="fa fa-cart-arrow-down" aria-hidden="true"></i>Keranjang
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </li>
-                        <li class="product-item">
-                            <div class="contain-product layout-default">
-                                <div class="product-thumb">
-                                    <a href="#" class="link-to-product">
-                                        <img src="assets/images/products/p-13.jpg" alt="dd" width="270" height="270" class="product-thumnail">
-                                    </a>
-                                </div>
-                                <div class="info">
-                                    <b class="categories">Buah</b>
-                                    <h4 class="product-title"><a href="#" class="pr-name">Plum Kuning</a></h4>
-                                    <div class="price">
-                                        <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>45.000</span></ins>
-                                    </div>
-                                    <div class="slide-down-box">
-                                        <p class="message">Semua produk dipilih dengan cermat untuk memastikan keamanan pangan.</p>
-                                        <div class="buttons">
-                                            <a href="detail_produk.php" class="btn add-to-cart-btn"><i class="fa fa-cart-arrow-down" aria-hidden="true"></i>Keranjang</a></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="product-item">
-                            <div class="contain-product layout-default">
-                                <div class="product-thumb">
-                                    <a href="#" class="link-to-product">
-                                        <img src="assets/images/products/p-13.jpg" alt="dd" width="270" height="270" class="product-thumnail">
-                                    </a>
-                                </div>
-                                <div class="info">
-                                    <b class="categories">Buah</b>
-                                    <h4 class="product-title"><a href="#" class="pr-name">Plum Kuning</a></h4>
-                                    <div class="price">
-                                        <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>45.000</span></ins>
-                                    </div>
-                                    <div class="slide-down-box">
-                                        <p class="message">Semua produk dipilih dengan cermat untuk memastikan keamanan pangan.</p>
-                                        <div class="buttons">
-                                            <a href="detail_produk.php" class="btn add-to-cart-btn"><i class="fa fa-cart-arrow-down" aria-hidden="true"></i>Keranjang</a></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="product-item">
-                            <div class="contain-product layout-default">
-                                <div class="product-thumb">
-                                    <a href="#" class="link-to-product">
-                                        <img src="assets/images/products/p-13.jpg" alt="dd" width="270" height="270" class="product-thumnail">
-                                    </a>
-                                </div>
-                                <div class="info">
-                                    <b class="categories">Buah</b>
-                                    <h4 class="product-title"><a href="#" class="pr-name">Plum Kuning</a></h4>
-                                    <div class="price">
-                                        <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>45.000</span></ins>
-                                    </div>
-                                    <div class="slide-down-box">
-                                        <p class="message">Semua produk dipilih dengan cermat untuk memastikan keamanan pangan.</p>
-                                        <div class="buttons">
-                                            <a href="detail_produk.php" class="btn add-to-cart-btn"><i class="fa fa-cart-arrow-down" aria-hidden="true"></i>Keranjang</a></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="product-item">
-                            <div class="contain-product layout-default">
-                                <div class="product-thumb">
-                                    <a href="#" class="link-to-product">
-                                        <img src="assets/images/products/p-13.jpg" alt="dd" width="270" height="270" class="product-thumnail">
-                                    </a>
-                                </div>
-                                <div class="info">
-                                    <b class="categories">Buah</b>
-                                    <h4 class="product-title"><a href="#" class="pr-name">Plum Kuning</a></h4>
-                                    <div class="price">
-                                        <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>45.000</span></ins>
-                                    </div>
-                                    <div class="slide-down-box">
-                                        <p class="message">Semua produk dipilih dengan cermat untuk memastikan keamanan pangan.</p>
-                                        <div class="buttons">
-                                            <a href="detail_produk.php" class="btn add-to-cart-btn"><i class="fa fa-cart-arrow-down" aria-hidden="true"></i>Keranjang</a></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="product-item">
-                            <div class="contain-product layout-default">
-                                <div class="product-thumb">
-                                    <a href="#" class="link-to-product">
-                                        <img src="assets/images/products/p-13.jpg" alt="dd" width="270" height="270" class="product-thumnail">
-                                    </a>
-                                </div>
-                                <div class="info">
-                                    <b class="categories">Buah</b>
-                                    <h4 class="product-title"><a href="#" class="pr-name">Plum Kuning</a></h4>
-                                    <div class="price">
-                                        <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>45.000</span></ins>
-                                    </div>
-                                    <div class="slide-down-box">
-                                        <p class="message">Semua produk dipilih dengan cermat untuk memastikan keamanan pangan.</p>
-                                        <div class="buttons">
-                                            <a href="detail_produk.php" class="btn add-to-cart-btn"><i class="fa fa-cart-arrow-down" aria-hidden="true"></i>Keranjang</a></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="product-item">
-                            <div class="contain-product layout-default">
-                                <div class="product-thumb">
-                                    <a href="#" class="link-to-product">
-                                        <img src="assets/images/products/p-13.jpg" alt="dd" width="270" height="270" class="product-thumnail">
-                                    </a>
-                                </div>
-                                <div class="info">
-                                    <b class="categories">Buah</b>
-                                    <h4 class="product-title"><a href="#" class="pr-name">Plum Kuning</a></h4>
-                                    <div class="price">
-                                        <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>45.000</span></ins>
-                                    </div>
-                                    <div class="slide-down-box">
-                                        <p class="message">Semua produk dipilih dengan cermat untuk memastikan keamanan pangan.</p>
-                                        <div class="buttons">
-                                            <a href="detail_produk.php" class="btn add-to-cart-btn"><i class="fa fa-cart-arrow-down" aria-hidden="true"></i>Keranjang</a></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="product-item">
-                            <div class="contain-product layout-default">
-                                <div class="product-thumb">
-                                    <a href="#" class="link-to-product">
-                                        <img src="assets/images/products/p-13.jpg" alt="dd" width="270" height="270" class="product-thumnail">
-                                    </a>
-                                </div>
-                                <div class="info">
-                                    <b class="categories">Buah</b>
-                                    <h4 class="product-title"><a href="#" class="pr-name">Plum Kuning</a></h4>
-                                    <div class="price">
-                                        <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>45.000</span></ins>
-                                    </div>
-                                    <div class="slide-down-box">
-                                        <p class="message">Semua produk dipilih dengan cermat untuk memastikan keamanan pangan.</p>
-                                        <div class="buttons">
-                                            <a href="detail_produk.php" class="btn add-to-cart-btn"><i class="fa fa-cart-arrow-down" aria-hidden="true"></i>Keranjang</a></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="product-item">
-                            <div class="contain-product layout-default">
-                                <div class="product-thumb">
-                                    <a href="#" class="link-to-product">
-                                        <img src="assets/images/products/p-13.jpg" alt="dd" width="270" height="270" class="product-thumnail">
-                                    </a>
-                                </div>
-                                <div class="info">
-                                    <b class="categories">Buah</b>
-                                    <h4 class="product-title"><a href="#" class="pr-name">Plum Kuning</a></h4>
-                                    <div class="price">
-                                        <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>45.000</span></ins>
-                                    </div>
-                                    <div class="slide-down-box">
-                                        <p class="message">Semua produk dipilih dengan cermat untuk memastikan keamanan pangan.</p>
-                                        <div class="buttons">
-                                            <a href="detail_produk.php" class="btn add-to-cart-btn"><i class="fa fa-cart-arrow-down" aria-hidden="true"></i>Keranjang</a></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
+                            </li>
+                        <?php endwhile; ?>
                     </ul>
+
                 </div>
 
             </div>
@@ -619,8 +421,7 @@
                 <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-9">
                         <section class="footer-item">
-                            <a href="index.php" class="biolife-logo"><img src="assets/images/favicon.png"
-                                    alt="biolife logo"><b style="font-size: 190% ; color: black;">Freshly.id</b></a>
+                            <a href="index.php" class="biolife-logo"><img src="assets/images/favicon.png" alt="biolife logo"><b style="font-size: 190% ; color: black;">Freshly.id</b></a>
                             <div class="footer-phone-info">
                                 <i class="biolife-icon icon-head-phone"></i>
                                 <p class="r-info">
