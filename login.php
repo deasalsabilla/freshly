@@ -1,3 +1,32 @@
+<?php
+session_start();
+
+require "admin/koneksi.php";
+
+if (isset($_POST["login"])) {
+  $username = $_POST["username"];
+  $password = $_POST["password"];
+
+  $result = mysqli_query($koneksi, "SELECT * FROM tb_user WHERE username='$username'");
+
+  // cek username
+  if (mysqli_num_rows($result) === 1) {
+    // cek password
+    $row = mysqli_fetch_assoc($result);
+    if (password_verify($password, $row["pass"])) {
+      // set session
+      $_SESSION["login"] = true;
+      $_SESSION["username"] = $row["username"];
+      $_SESSION["id_user"] = $row["id_user"];
+      header("refresh:0, index.php");
+    } else {
+      echo "<script>alert('Username atau password yang anda masukkan salah')</script>";
+    }
+  } else {
+    echo "<script>alert('Username atau password yang anda masukkan salah')</script>";
+  }
+}
+?>
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 
@@ -89,15 +118,15 @@
                         <div class="signin-container">
                             <form action="#" name="frm-login" method="post">
                                 <p class="form-row">
-                                    <label for="fid-name">Username:<span class="requite">*</span></label>
-                                    <input type="text" id="fid-name" name="name" value="" class="txt-input">
+                                    <label for="username">Username:<span class="requite">*</span></label>
+                                    <input type="text" id="username" name="username" class="txt-input" required>
                                 </p>
                                 <p class="form-row">
-                                    <label for="fid-pass">Password:<span class="requite">*</span></label>
-                                    <input type="email" id="fid-pass" name="email" value="" class="txt-input">
+                                    <label for="password">Password:<span class="requite">*</span></label>
+                                    <input type="password" id="password" name="password" class="txt-input" required>
                                 </p>
                                 <p class="form-row wrap-btn">
-                                    <button class="btn btn-submit btn-bold" type="submit">Masuk</button>
+                                    <button class="btn btn-submit btn-bold" type="submit" name="login">Masuk</button>
                                     <a href="#" class="link-to-help">Lupa password?</a>
                                 </p>
                             </form>
