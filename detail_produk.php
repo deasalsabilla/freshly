@@ -1,4 +1,5 @@
 <?php
+session_start();
 include 'admin/koneksi.php';
 
 // Pastikan ada parameter id_produk yang dikirim dari URL
@@ -317,31 +318,33 @@ if (isset($_POST['add_to_cart'])) {
                         <div class="shipping-info">
                         </div>
                     </div>
-                    <div class="action-form">
-                        <div class="quantity-box">
-                            <span class="title">Quantity:</span>
-                            <div class="qty-input">
-                                <input type="text" name="qty12554" value="1" data-max_value="20" data-min_value="1" data-step="1">
-                                <a href="#" class="qty-btn btn-up"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                                <a href="#" class="qty-btn btn-down"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                    <form action="" method="post">
+                        <div class="action-form">
+                            <div class="quantity-box">
+                                <span class="title">Quantity:</span>
+                                <div class="qty-input">
+                                    <input type="text" name="qty" value="1" data-max_value="20" data-min_value="1" data-step="1">
+                                    <a href="#" class="qty-btn btn-up"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                                    <a href="#" class="qty-btn btn-down"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                                </div>
+                            </div>
+                            <div class="buttons">
+                            <button type="submit" class="btn add-to-cart-btn" name="add_to_cart">Keranjang</button>
+                                <p class="pull-row">
+                                    <a href="#" class="btn wishlist-btn">wishlist</a>
+                                    <a href="#" class="btn compare-btn">compare</a>
+                                </p>
+                            </div>
+                            <div class="acepted-payment-methods">
+                                <ul class="payment-methods">
+                                    <li><img src="assets/images/card1.jpg" alt="" width="51" height="36"></li>
+                                    <li><img src="assets/images/card2.jpg" alt="" width="51" height="36"></li>
+                                    <li><img src="assets/images/card3.jpg" alt="" width="51" height="36"></li>
+                                    <li><img src="assets/images/card4.jpg" alt="" width="51" height="36"></li>
+                                </ul>
                             </div>
                         </div>
-                        <div class="buttons">
-                            <a href="#" class="btn add-to-cart-btn">Keranjang</a>
-                            <p class="pull-row">
-                                <a href="#" class="btn wishlist-btn">wishlist</a>
-                                <a href="#" class="btn compare-btn">compare</a>
-                            </p>
-                        </div>
-                        <div class="acepted-payment-methods">
-                            <ul class="payment-methods">
-                                <li><img src="assets/images/card1.jpg" alt="" width="51" height="36"></li>
-                                <li><img src="assets/images/card2.jpg" alt="" width="51" height="36"></li>
-                                <li><img src="assets/images/card3.jpg" alt="" width="51" height="36"></li>
-                                <li><img src="assets/images/card4.jpg" alt="" width="51" height="36"></li>
-                            </ul>
-                        </div>
-                    </div>
+                    </form>
                 </div>
 
                 <!-- Tab info -->
