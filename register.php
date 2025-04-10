@@ -1,3 +1,12 @@
+<?php
+
+require 'admin/koneksi.php';
+require 'function.php';
+$sql = mysqli_query($koneksi, "select * from tb_user");
+$data = mysqli_fetch_array($sql);
+
+
+?>
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 
@@ -22,6 +31,18 @@
 
 <body class="biolife-body">
 
+    <?php
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (registrasi($_POST)) {
+            echo "<script>alert('User baru berhasil ditambahkan');";
+            echo "window.location.href = 'login.php';</script>";
+            exit;
+        } else {
+            echo "<script>alert('Registrasi gagal');</script>";
+        }
+    }
+    ?>
+
     <!-- Preloader -->
     <div id="biof-loading">
         <div class="biof-loading-center">
@@ -39,8 +60,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-3 col-md-3 col-6 d-flex align-items-center">
-                        <a href="register.php" class="biolife-logo"><img src="assets/images/favicon.png"
-                                alt="biolife logo"><b style="font-size: 190% ; color: black;">Freshly.id</b></a>
+                        <a href="register.php" class="biolife-logo"><img src="assets/images/favicon.png" alt="biolife logo"><b style="font-size: 190% ; color: black;">Freshly.id</b></a>
                     </div>
                     <div class="col-lg-6 col-md-6 d-none d-md-block text-center">
                         <div class="primary-menu">
@@ -87,21 +107,21 @@
                     <!--Form Sign In-->
                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                         <div class="signin-container">
-                            <form action="#" name="frm-login" method="post">
+                            <form name="frm-login" method="post">
                                 <p class="form-row">
-                                    <label for="fid-name">Username:<span class="requite">*</span></label>
-                                    <input type="text" id="fid-name" name="name" value="" class="txt-input">
+                                    <label for="username">Username:<span class="requite">*</span></label>
+                                    <input type="text" id="username" name="username" class="txt-input" required>
                                 </p>
                                 <p class="form-row">
-                                    <label for="fid-pass">Password:<span class="requite">*</span></label>
-                                    <input type="email" id="fid-pass" name="email" value="" class="txt-input">
+                                    <label for="password">Password:<span class="requite">*</span></label>
+                                    <input type="password" id="password" name="password" class="txt-input" required>
                                 </p>
                                 <p class="form-row">
-                                    <label for="fid-pass">Konfirmasi Password:<span class="requite">*</span></label>
-                                    <input type="email" id="fid-pass" name="email" value="" class="txt-input">
+                                    <label for="password2">Konfirmasi Password:<span class="requite">*</span></label>
+                                    <input type="password" id="password2" name="password2" class="txt-input" required>
                                 </p>
                                 <p class="form-row wrap-btn">
-                                    <button class="btn btn-submit btn-bold" type="submit">Daftar Sekarang</button>
+                                    <button class="btn btn-submit btn-bold" type="submit" name="register">Daftar Sekarang</button>
                                 </p>
                             </form>
                         </div>
@@ -141,8 +161,7 @@
                 <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-9">
                         <section class="footer-item">
-                            <a href="index.php" class="biolife-logo"><img src="assets/images/favicon.png"
-                                    alt="biolife logo"><b style="font-size: 190% ; color: black;">Freshly.id</b></a>
+                            <a href="index.php" class="biolife-logo"><img src="assets/images/favicon.png" alt="biolife logo"><b style="font-size: 190% ; color: black;">Freshly.id</b></a>
                             <div class="footer-phone-info">
                                 <i class="biolife-icon icon-head-phone"></i>
                                 <p class="r-info">
