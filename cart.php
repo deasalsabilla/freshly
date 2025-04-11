@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 
@@ -53,8 +56,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-3 col-md-3 col-6 d-flex align-items-center">
-                        <a href="index.php" class="biolife-logo"><img src="assets/images/favicon.png"
-                                alt="biolife logo"><b style="font-size: 190% ; color: black;">Freshly.id</b></a>
+                        <a href="index.php" class="biolife-logo"><img src="assets/images/favicon.png" alt="biolife logo"><b style="font-size: 190% ; color: black;">Freshly.id</b></a>
                     </div>
                     <div class="col-lg-6 col-md-6 d-none d-md-block text-center">
                         <div class="primary-menu">
@@ -122,70 +124,59 @@
                                             <th class="product-subtotal">Total</th>
                                         </tr>
                                     </thead>
+                                    <?php
+                                    include 'admin/koneksi.php'; // Pastikan koneksi DB kamu benar
+
+                                    $id_user = $_SESSION['id_user'];
+
+                                    $query = "SELECT p.*, pr.nm_produk, pr.harga, pr.gambar 
+          FROM tb_pesanan p 
+          JOIN tb_produk pr ON p.id_produk = pr.id_produk 
+          WHERE p.id_user = '$id_user'";
+                                    $result = mysqli_query($koneksi, $query);
+
+                                    $subtotal = 0;
+                                    ?>
+
                                     <tbody>
-                                        <tr class="cart_item">
-                                            <td class="product-thumbnail" data-title="Product Name">
-                                                <a class="prd-thumb" href="#">
-                                                    <figure><img width="113" height="113" src="assets/images/shippingcart/pr-01.jpg" alt="shipping cart"></figure>
-                                                </a>
-                                                <a class="prd-name" href="#">Buah dan Sayuran Kering</a>
-                                                <div class="action">
-                                                    <a href="#" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
-                                                </div>
-                                            </td>
-                                            <td class="product-price" data-title="Price">
-                                                <div class="price price-contain">
-                                                    <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>25.000</span></ins>
-                                                </div>
-                                            </td>
-                                            <td class="product-quantity" data-title="Quantity">
-                                                <div class="quantity-box type1">
-                                                    <div class="qty-input">
-                                                        <input type="text" name="qty12554" value="1" data-max_value="20" data-min_value="1" data-step="1">
-                                                        <a href="#" class="qty-btn btn-up"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                                                        <a href="#" class="qty-btn btn-down"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                                        <?php while ($row = mysqli_fetch_assoc($result)) : ?>
+                                            <?php $total_item = $row['harga'] * $row['qty']; ?>
+                                            <tr class="cart_item">
+                                                <td class="product-thumbnail" data-title="Product Name">
+                                                    <a class="prd-thumb" href="#">
+                                                        <figure><img width="113" height="113" src="admin/produk_img/<?= $row['gambar']; ?>" alt="<?= $row['nm_produk']; ?>"></figure>
+                                                    </a>
+                                                    <a class="prd-name" href="#"><?= $row['nm_produk']; ?></a>
+                                                    <div class="action">
+                                                        <a href="hapus_item.php?id=<?= $row['id_pesanan']; ?>" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td class="product-subtotal" data-title="Total">
-                                                <div class="price price-contain">
-                                                    <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>25.000</span></ins>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr class="cart_item">
-                                            <td class="product-thumbnail" data-title="Product Name">
-                                                <a class="prd-thumb" href="#">
-                                                    <figure><img width="113" height="113" src="assets/images/shippingcart/pr-02.jpg" alt="shipping cart"></figure>
-                                                </a>
-                                                <a class="prd-name" href="#">Kacang Tanah</a>
-                                                <div class="action">
-                                                    <a href="#" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
-                                                </div>
-                                            </td>
-                                            <td class="product-price" data-title="Price">
-                                                <div class="price price-contain">
-                                                    <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>15.000</span></ins>
-                                                </div>
-                                            </td>
-                                            <td class="product-quantity" data-title="Quantity">
-                                                <div class="quantity-box type1">
-                                                    <div class="qty-input">
-                                                        <input type="text" name="qty12554" value="1" data-max_value="20" data-min_value="1" data-step="1">
-                                                        <a href="#" class="qty-btn btn-up"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                                                        <a href="#" class="qty-btn btn-down"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                                                </td>
+                                                <td class="product-price" data-title="Price">
+                                                    <div class="price price-contain">
+                                                        <ins><span class="price-amount"><span class="currencySymbol">Rp. </span><?= number_format($row['harga'], 0, ',', '.'); ?></span></ins>
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td class="product-subtotal" data-title="Total">
-                                                <div class="price price-contain">
-                                                    <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>15.000</span></ins>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                                </td>
+                                                <td class="product-quantity" data-title="Quantity">
+                                                    <div class="quantity-box type1">
+                                                        <div class="qty-input">
+                                                            <input type="text" name="qty<?= $row['id_pesanan']; ?>" value="<?= $row['qty']; ?>" data-max_value="20" data-min_value="1" data-step="1">
+                                                            <a href="#" class="qty-btn btn-up"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                                                            <a href="#" class="qty-btn btn-down"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="product-subtotal" data-title="Total">
+                                                    <div class="price price-contain">
+                                                        <ins><span class="price-amount"><span class="currencySymbol">Rp. </span><?= number_format($total_item, 0, ',', '.'); ?></span></ins>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <?php $subtotal += $total_item; ?>
+                                        <?php endwhile; ?>
+
                                         <tr class="cart_item wrap-buttons">
                                             <td class="wrap-btn-control" colspan="4">
-                                                <a class="btn back-to-shop">Kembali</a>
+                                                <a class="btn back-to-shop" href="produk.php">Kembali</a>
                                                 <button class="btn btn-update" type="submit" disabled>Perbarui Keranjang</button>
                                                 <button class="btn btn-clear" type="reset">Hapus Semua</button>
                                             </td>
@@ -195,18 +186,30 @@
                             </form>
                         </div>
                         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                            <?php
+                            // Hitung diskon
+                            if ($subtotal > 500000) {
+                                $diskon = $subtotal * 0.08;
+                            } elseif ($subtotal > 150000) {
+                                $diskon = $subtotal * 0.05;
+                            } else {
+                                $diskon = 0;
+                            }
+
+                            $total_bayar = $subtotal - $diskon;
+                            ?>
                             <div class="shpcart-subtotal-block">
                                 <div class="subtotal-line">
-                                    <b class="stt-name">Subtotal
-                                    <span class="stt-price">Rp. 40.000</span>
+                                    <b class="stt-name">Subtotal</b>
+                                    <span class="stt-price">Rp. <?= number_format($subtotal, 0, ',', '.'); ?></span>
                                 </div>
                                 <div class="subtotal-line">
                                     <b class="stt-name">Diskon</b>
-                                    <span class="stt-price">Rp. 0</span>
+                                    <span class="stt-price">Rp. <?= number_format($diskon, 0, ',', '.'); ?></span>
                                 </div>
                                 <div class="subtotal-line">
                                     <b class="stt-name">Total Bayar</b>
-                                    <span class="stt-price">Rp. 40.000</span>
+                                    <span class="stt-price">Rp. <?= number_format($total_bayar, 0, ',', '.'); ?></span>
                                 </div>
                                 <div class="tax-fee">
                                 </div>
@@ -236,8 +239,7 @@
                 <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-9">
                         <section class="footer-item">
-                        <a href="index.php" class="biolife-logo"><img src="assets/images/favicon.png"
-                        alt="biolife logo"><b style="font-size: 190% ; color: black;">Freshly.id</b></a>
+                            <a href="index.php" class="biolife-logo"><img src="assets/images/favicon.png" alt="biolife logo"><b style="font-size: 190% ; color: black;">Freshly.id</b></a>
                             <div class="footer-phone-info">
                                 <i class="biolife-icon icon-head-phone"></i>
                                 <p class="r-info">
@@ -249,7 +251,7 @@
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-6 md-margin-top-5px sm-margin-top-50px xs-margin-top-40px">
                         <section class="footer-item">
-                            
+
                         </section>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-6 md-margin-top-5px sm-margin-top-50px xs-margin-top-40px">
