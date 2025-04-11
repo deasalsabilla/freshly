@@ -803,7 +803,13 @@ session_start();
         </div>
     </div>
 
-          .then(response => response.json())
+    <script>
+        function checkout() {
+            if (confirm("Yakin ingin checkout sekarang?")) {
+                fetch('checkout.php', {
+                        method: 'POST'
+                    })
+                    .then(response => response.json())
                     .then(data => {
                         alert(data.message);
                         if (data.success) {
@@ -816,13 +822,7 @@ session_start();
                     });
             }
         }
-    </script> <script>
-        function checkout() {
-            if (confirm("Yakin ingin checkout sekarang?")) {
-                fetch('checkout.php', {
-                        method: 'POST'
-                    })
-             
+    </script>
 
     <!-- Scroll Top Button -->
     <a class="btn-scroll-top"><i class="biolife-icon icon-left-arrow"></i></a>
