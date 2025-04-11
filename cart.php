@@ -114,7 +114,7 @@ session_start();
                     <div class="row">
                         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
                             <h3 class="box-title">Keranjang Anda</h3>
-                            <form class="shopping-cart-form" action="#" method="post">
+                            <form class="shopping-cart-form" method="post">
                                 <table class="shop_table cart-form">
                                     <thead>
                                         <tr>
@@ -124,11 +124,69 @@ session_start();
                                             <th class="product-subtotal">Total</th>
                                         </tr>
                                     </thead>
+
                                     <?php
-                                    include 'admin/koneksi.php'; // Pastikan koneksi DB kamu benar
+
+                                    include 'admin/koneksi.php';
+
+                                    if (!isset($_SESSION['id_user'])) {
+                                        // kalau belum login, redirect (opsional)
+                                        header("Location: login.php");
+                                        exit;
+                                    }
 
                                     $id_user = $_SESSION['id_user'];
 
+                                    // Cek jika tombol update ditekan
+                                    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_keranjang'])) {
+                                        $berhasil_update = false;
+                                        $gagal_update = false;
+
+                                        foreach ($_POST as $key => $value) {
+                                            if (strpos($key, 'qty') === 0) {
+                                                $id_pesanan = str_replace('qty', '', $key);
+                                                $id_pesanan = mysqli_real_escape_string($koneksi, $id_pesanan);
+                                                $qty = intval($value);
+
+                                                if ($qty > 0) {
+                                                    // Ambil id_produk dan stok dari pesanan
+                                                    $get_produk = mysqli_query($koneksi, "
+                                                        SELECT pr.id_produk, pr.stok 
+                                                        FROM tb_pesanan p
+                                                        JOIN tb_produk pr ON p.id_produk = pr.id_produk
+                                                        WHERE p.id_pesanan = '$id_pesanan' AND p.id_user = '$id_user'
+                                                    ");
+                                                    $produk = mysqli_fetch_assoc($get_produk);
+
+                                                    if ($produk) {
+                                                        $stok = intval($produk['stok']);
+
+                                                        if ($qty <= $stok) {
+                                                            // Update qty
+                                                            $query = "UPDATE tb_pesanan SET qty = $qty WHERE id_pesanan = '$id_pesanan' AND id_user = '$id_user'";
+                                                            if (mysqli_query($koneksi, $query)) {
+                                                                $berhasil_update = true;
+                                                            }
+                                                        } else {
+                                                            // Qty melebihi stok
+                                                            $gagal_update = true;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        // Tampilkan alert berdasarkan hasil
+                                        if ($berhasil_update && !$gagal_update) {
+                                            echo "<script>alert('Jumlah produk berhasil diperbarui!');</script>";
+                                        } elseif ($gagal_update && !$berhasil_update) {
+                                            echo "<script>alert('Gagal memperbarui: jumlah melebihi stok produk!');</script>";
+                                        } elseif ($berhasil_update && $gagal_update) {
+                                            echo "<script>alert('Sebagian produk berhasil diperbarui. Beberapa jumlah melebihi stok!');</script>";
+                                        }
+                                    }
+
+                                    // Ambil ulang data setelah (atau sebelum) update
                                     $query = "SELECT p.*, pr.nm_produk, pr.harga, pr.gambar 
           FROM tb_pesanan p 
           JOIN tb_produk pr ON p.id_produk = pr.id_produk 
@@ -159,9 +217,9 @@ session_start();
                                                 <td class="product-quantity" data-title="Quantity">
                                                     <div class="quantity-box type1">
                                                         <div class="qty-input">
-                                                            <input type="text" name="qty<?= $row['id_pesanan']; ?>" value="<?= $row['qty']; ?>" data-max_value="20" data-min_value="1" data-step="1">
-                                                            <a href="#" class="qty-btn btn-up"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
-                                                            <a href="#" class="qty-btn btn-down"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                                                            <input type="number" name="qty<?= $row['id_pesanan']; ?>" value="<?= $row['qty']; ?>" data-max_value="20" data-min_value="1" data-step="1">
+                                                            <a type="button" class="qty-btn btn-up"><i class="fa fa-caret-up" aria-hidden="true"></i></a>
+                                                            <a type="button" class="qty-btn btn-down"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -176,8 +234,8 @@ session_start();
 
                                         <tr class="cart_item wrap-buttons">
                                             <td class="wrap-btn-control" colspan="4">
-                                                <a class="btn back-to-shop" href="produk.php">Kembali</a>
-                                                <button class="btn btn-update" type="submit" disabled>Perbarui Keranjang</button>
+                                                <a class="btn back-to-shop" href="belanja.php">Kembali</a>
+                                                <button class="btn btn-update" type="submit" name="update_keranjang">Perbarui Keranjang</button>
                                                 <button class="btn btn-clear" type="reset">Hapus Semua</button>
                                             </td>
                                         </tr>
