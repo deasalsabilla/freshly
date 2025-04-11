@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 
@@ -30,6 +33,32 @@
             background-color: #347928;
             color: #fff;
             text-decoration: none;
+        }
+
+        .logout-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .logout-list li {
+            border-bottom: 1px solid #eee;
+        }
+
+        .logout-list li:last-child {
+            border-bottom: none;
+        }
+
+        .logout-list li a {
+            display: block;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #333;
+            transition: background 0.2s ease;
+        }
+
+        .logout-list li a:hover {
+            background-color: #f2f2f2;
         }
     </style>`
 </head>
@@ -90,136 +119,166 @@
                                     </form>
                                 </div>
                             </div>
-                            <div class="minicart-block">
-                                <div class="minicart-contain">
-                                    <a href="javascript:void(0)" class="link-to">
-                                        <span class="icon-qty-combine">
-                                            <i class="icon-cart-mini biolife-icon"></i>
-                                            <span class="qty">8</span>
-                                        </span>
-                                        <span class="title">Keranjang -</span>
-                                        <span class="sub-total">Rp. 0</span>
-                                    </a>
-                                    <div class="cart-content">
-                                        <div class="cart-inner">
-                                            <ul class="products">
-                                                <li>
-                                                    <div class="minicart-item">
-                                                        <div class="thumb">
-                                                            <a href="#"><img src="assets/images/minicart/pr-01.jpg" width="90" height="90" alt="National Fresh"></a>
-                                                        </div>
-                                                        <div class="left-info">
-                                                            <div class="product-title"><a href="#" class="product-name">Alpukat</a></div>
-                                                            <div class="price">
-                                                                <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>18.000</span></ins>
+                            <?php if (isset($_SESSION['username'])) : ?>
+                                <?php
+                                include 'admin/koneksi.php';
+                                $user_id = $_SESSION['id_user'] ?? null;
+
+                                if ($user_id) {
+                                    $query = "SELECT COUNT(*) as total FROM tb_pesanan WHERE id_user = '$user_id'";
+                                    $result = mysqli_query($koneksi, $query);
+                                    $data = mysqli_fetch_assoc($result);
+                                    $jumlah_item = $data['total'] ?? 0;
+                                } else {
+                                    $jumlah_item = 0;
+                                }
+                                ?>
+                                <div class="minicart-block">
+                                    <div class="minicart-contain">
+                                        <a href="javascript:void(0)" class="link-to">
+                                            <span class="icon-qty-combine">
+                                                <i class="icon-cart-mini biolife-icon"></i>
+                                                <span class="qty"><?= $jumlah_item ?></span>
+                                            </span>
+                                            <span class="title">Keranjang -</span>
+                                            <span class="sub-total">Rp. 0</span>
+                                        </a>
+                                        <div class="cart-content">
+                                            <div class="cart-inner">
+                                                <ul class="products">
+                                                    <li>
+                                                        <div class="minicart-item">
+                                                            <div class="thumb">
+                                                                <a href="#"><img src="assets/images/minicart/pr-01.jpg" width="90" height="90" alt="National Fresh"></a>
                                                             </div>
-                                                            <div class="qty">
-                                                                <label for="cart[id123][qty]">Qty:</label>
-                                                                <input type="number" class="input-qty" name="cart[id123][qty]" id="cart[id123][qty]" value="1" disabled>
+                                                            <div class="left-info">
+                                                                <div class="product-title"><a href="#" class="product-name">Alpukat</a></div>
+                                                                <div class="price">
+                                                                    <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>18.000</span></ins>
+                                                                </div>
+                                                                <div class="qty">
+                                                                    <label for="cart[id123][qty]">Qty:</label>
+                                                                    <input type="number" class="input-qty" name="cart[id123][qty]" id="cart[id123][qty]" value="1" disabled>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="action">
-                                                            <a href="#" class="edit"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-                                                            <a href="#" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="minicart-item">
-                                                        <div class="thumb">
-                                                            <a href="#"><img src="assets/images/minicart/pr-02.jpg" width="90" height="90" alt="National Fresh"></a>
-                                                        </div>
-                                                        <div class="left-info">
-                                                            <div class="product-title"><a href="#" class="product-name">Apel</a></div>
-                                                            <div class="price">
-                                                                <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>10.000</span></ins>
-                                                            </div>
-                                                            <div class="qty">
-                                                                <label for="cart[id124][qty]">Qty:</label>
-                                                                <input type="number" class="input-qty" name="cart[id124][qty]" id="cart[id124][qty]" value="1" disabled>
+                                                            <div class="action">
+                                                                <a href="#" class="edit"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                                                <a href="#" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
                                                             </div>
                                                         </div>
-                                                        <div class="action">
-                                                            <a href="#" class="edit"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-                                                            <a href="#" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="minicart-item">
-                                                        <div class="thumb">
-                                                            <a href="#"><img src="assets/images/minicart/pr-03.jpg" width="90" height="90" alt="National Fresh"></a>
-                                                        </div>
-                                                        <div class="left-info">
-                                                            <div class="product-title"><a href="#" class="product-name">Brokoli</a></div>
-                                                            <div class="price">
-                                                                <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>15.000</span></ins>
+                                                    </li>
+                                                    <li>
+                                                        <div class="minicart-item">
+                                                            <div class="thumb">
+                                                                <a href="#"><img src="assets/images/minicart/pr-02.jpg" width="90" height="90" alt="National Fresh"></a>
                                                             </div>
-                                                            <div class="qty">
-                                                                <label for="cart[id125][qty]">Qty:</label>
-                                                                <input type="number" class="input-qty" name="cart[id125][qty]" id="cart[id125][qty]" value="1" disabled>
+                                                            <div class="left-info">
+                                                                <div class="product-title"><a href="#" class="product-name">Apel</a></div>
+                                                                <div class="price">
+                                                                    <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>10.000</span></ins>
+                                                                </div>
+                                                                <div class="qty">
+                                                                    <label for="cart[id124][qty]">Qty:</label>
+                                                                    <input type="number" class="input-qty" name="cart[id124][qty]" id="cart[id124][qty]" value="1" disabled>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="action">
-                                                            <a href="#" class="edit"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-                                                            <a href="#" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="minicart-item">
-                                                        <div class="thumb">
-                                                            <a href="#"><img src="assets/images/minicart/pr-04.jpg" width="90" height="90" alt="National Fresh"></a>
-                                                        </div>
-                                                        <div class="left-info">
-                                                            <div class="product-title"><a href="#" class="product-name">Lemon</a></div>
-                                                            <div class="price">
-                                                                <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>10.000</span></ins>
-                                                            </div>
-                                                            <div class="qty">
-                                                                <label for="cart[id126][qty]">Qty:</label>
-                                                                <input type="number" class="input-qty" name="cart[id126][qty]" id="cart[id126][qty]" value="1" disabled>
+                                                            <div class="action">
+                                                                <a href="#" class="edit"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                                                <a href="#" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
                                                             </div>
                                                         </div>
-                                                        <div class="action">
-                                                            <a href="#" class="edit"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-                                                            <a href="#" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="minicart-item">
-                                                        <div class="thumb">
-                                                            <a href="#"><img src="assets/images/minicart/pr-05.jpg" width="90" height="90" alt="National Fresh"></a>
-                                                        </div>
-                                                        <div class="left-info">
-                                                            <div class="product-title"><a href="#" class="product-name">Ceri</a></div>
-                                                            <div class="price">
-                                                                <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>20.000</span></ins>
+                                                    </li>
+                                                    <li>
+                                                        <div class="minicart-item">
+                                                            <div class="thumb">
+                                                                <a href="#"><img src="assets/images/minicart/pr-03.jpg" width="90" height="90" alt="National Fresh"></a>
                                                             </div>
-                                                            <div class="qty">
-                                                                <label for="cart[id127][qty]">Qty:</label>
-                                                                <input type="number" class="input-qty" name="cart[id127][qty]" id="cart[id127][qty]" value="1" disabled>
+                                                            <div class="left-info">
+                                                                <div class="product-title"><a href="#" class="product-name">Brokoli</a></div>
+                                                                <div class="price">
+                                                                    <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>15.000</span></ins>
+                                                                </div>
+                                                                <div class="qty">
+                                                                    <label for="cart[id125][qty]">Qty:</label>
+                                                                    <input type="number" class="input-qty" name="cart[id125][qty]" id="cart[id125][qty]" value="1" disabled>
+                                                                </div>
+                                                            </div>
+                                                            <div class="action">
+                                                                <a href="#" class="edit"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                                                <a href="#" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
                                                             </div>
                                                         </div>
-                                                        <div class="action">
-                                                            <a href="#" class="edit"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-                                                            <a href="#" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                                    </li>
+                                                    <li>
+                                                        <div class="minicart-item">
+                                                            <div class="thumb">
+                                                                <a href="#"><img src="assets/images/minicart/pr-04.jpg" width="90" height="90" alt="National Fresh"></a>
+                                                            </div>
+                                                            <div class="left-info">
+                                                                <div class="product-title"><a href="#" class="product-name">Lemon</a></div>
+                                                                <div class="price">
+                                                                    <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>10.000</span></ins>
+                                                                </div>
+                                                                <div class="qty">
+                                                                    <label for="cart[id126][qty]">Qty:</label>
+                                                                    <input type="number" class="input-qty" name="cart[id126][qty]" id="cart[id126][qty]" value="1" disabled>
+                                                                </div>
+                                                            </div>
+                                                            <div class="action">
+                                                                <a href="#" class="edit"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                                                <a href="#" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                            <p class="btn-control">
-                                                <a href="cart.php" class="btn view-cart">Lihat Keranjang</a>
-                                                <a href="#" class="btn">checkout</a>
-                                            </p>
+                                                    </li>
+                                                    <li>
+                                                        <div class="minicart-item">
+                                                            <div class="thumb">
+                                                                <a href="#"><img src="assets/images/minicart/pr-05.jpg" width="90" height="90" alt="National Fresh"></a>
+                                                            </div>
+                                                            <div class="left-info">
+                                                                <div class="product-title"><a href="#" class="product-name">Ceri</a></div>
+                                                                <div class="price">
+                                                                    <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>20.000</span></ins>
+                                                                </div>
+                                                                <div class="qty">
+                                                                    <label for="cart[id127][qty]">Qty:</label>
+                                                                    <input type="number" class="input-qty" name="cart[id127][qty]" id="cart[id127][qty]" value="1" disabled>
+                                                                </div>
+                                                            </div>
+                                                            <div class="action">
+                                                                <a href="#" class="edit"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                                                <a href="#" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                                <p class="btn-control">
+                                                    <a href="cart.php" class="btn view-cart">Lihat Keranjang</a>
+                                                    <a href="#" class="btn">checkout</a>
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="login-button">
-                                <a href="login.php" class="btn btn-sm btn-outline-primary" style="padding: 6px 15px; border-radius: 20px;">Login</a>
-                            </div>
+                                <div class="dropdown user wishlist-block hidden-sm hidden-xs">
+                                    <a class="dropdown-toggle d-flex align-items-center link-to" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span class="icon-qty-combine">
+                                            <i class="fas fa-user biolife-icon"></i>
+                                            <span class="qty"><?= htmlspecialchars($_SESSION['username']); ?></span> <!-- Ganti qty jadi username -->
+                                        </span>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                                    <ul class="logout-list">
+        <li><a href="logout.php">Logout</a></li>
+    </ul>
+                                    </div>
+                                </div>
+                            <?php else : ?>
+                                <!-- Login Button (shown if not logged in) -->
+                                <div class="login-button">
+                                    <a href="login.php" class="btn btn-sm btn-outline-primary">Login</a>
+                                </div>
+                            <?php endif; ?>
                             <div class="mobile-menu-toggle">
                                 <a class="btn-toggle" data-object="open-mobile-menu" href="javascript:void(0)">
                                     <span></span>
