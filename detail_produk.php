@@ -220,7 +220,7 @@ if (isset($_POST['add_to_cart'])) {
                                                                         </div>
                                                                     </div>
                                                                     <div class="action">
-                                                                        <a href="hapus_item.php?id=<?= $row['id_pesanan'] ?>" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                                                        <a href="hapus_item.php?id=<?= $row['id_pesanan'] ?>"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
                                                                     </div>
                                                                 </div>
                                                             </li>

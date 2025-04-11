@@ -21,7 +21,7 @@ session_start();
     <link rel="stylesheet" href="assets/css/slick.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/main-color.css">
-    `<style>
+    <style>
         .login-button a {
             font-weight: 600;
             color: #347928;
@@ -60,7 +60,7 @@ session_start();
         .logout-list li a:hover {
             background-color: #f2f2f2;
         }
-    </style>`
+    </style>
 </head>
 
 <body class="biolife-body">
@@ -177,7 +177,7 @@ session_start();
                                                                         </div>
                                                                     </div>
                                                                     <div class="action">
-                                                                        <a href="hapus_item.php?id=<?= $row['id_pesanan'] ?>" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                                                        <a href="hapus_item.php?id=<?= $row['id_pesanan'] ?>"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
                                                                     </div>
                                                                 </div>
                                                             </li>

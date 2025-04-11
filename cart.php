@@ -206,7 +206,7 @@ session_start();
                                                     </a>
                                                     <a class="prd-name" href="#"><?= $row['nm_produk']; ?></a>
                                                     <div class="action">
-                                                        <a href="hapus_item.php?id=<?= $row['id_pesanan']; ?>" class="remove"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                                        <a href="hapus_item.php?id=<?= $row['id_pesanan']; ?>"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
                                                     </div>
                                                 </td>
                                                 <td class="product-price" data-title="Price">
@@ -236,7 +236,6 @@ session_start();
                                             <td class="wrap-btn-control" colspan="4">
                                                 <a class="btn back-to-shop" href="belanja.php">Kembali</a>
                                                 <button class="btn btn-update" type="submit" name="update_keranjang">Perbarui Keranjang</button>
-                                                <button class="btn btn-clear" type="reset">Hapus Semua</button>
                                             </td>
                                         </tr>
                                     </tbody>
