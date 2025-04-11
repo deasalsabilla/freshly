@@ -272,12 +272,35 @@ session_start();
                                 <div class="tax-fee">
                                 </div>
                                 <div class="btn-checkout">
-                                    <a href="#" class="btn checkout">Check out</a>
+                                    <a href="#" class="btn checkout" onclick="checkout()">Check out</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <script>
+                    function checkout() {
+                        if (confirm("Yakin ingin checkout sekarang?")) {
+                            fetch('checkout.php', {
+                                    method: 'POST'
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    alert(data.message);
+                                    if (data.success) {
+                                        window.location.href = "belanja.php";
+                                    }
+                                })
+                                .catch(error => {
+                                    alert("Terjadi kesalahan saat proses checkout.");
+                                    console.error(error);
+                                });
+                        }
+                    }
+                </script>
+
+
 
                 <!--Related Product-->
                 <div class="product-related-box single-layout">
