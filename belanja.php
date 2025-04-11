@@ -268,9 +268,9 @@ session_start();
                                         </span>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                                    <ul class="logout-list">
-        <li><a href="logout.php">Logout</a></li>
-    </ul>
+                                        <ul class="logout-list">
+                                            <li><a href="logout.php">Logout</a></li>
+                                        </ul>
                                     </div>
                                 </div>
                             <?php else : ?>
@@ -614,6 +614,7 @@ session_start();
                         // Query ambil data produk dengan limit
                         $query = "SELECT p.*, k.nm_ktg FROM tb_produk p 
           JOIN tb_ktg k ON p.id_ktg = k.id_ktg 
+          ORDER BY p.id_produk ASC 
           LIMIT $start, $limit";
 
                         $result = mysqli_query($koneksi, $query);
