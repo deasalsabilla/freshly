@@ -145,6 +145,24 @@
         </div>
         <!-- End Page Title -->
 
+        <?php
+        include "koneksi.php";
+
+        if ($koneksi->connect_error) {
+            die("Koneksi gagal: " . $koneksi->connect_error);
+        }
+
+        $sqlKategori = "SELECT id_ktg, nm_ktg FROM tb_ktg";
+        $resultKategori = $koneksi->query($sqlKategori);
+
+        $sqlTransaksi = "SELECT COUNT(*) as total FROM tb_jual";
+        $resultTransaksi = $koneksi->query($sqlTransaksi);
+        $dataTransaksi = $resultTransaksi->fetch_assoc();
+        $adaTransaksi = ($dataTransaksi['total'] > 0);
+
+        $koneksi->close();
+        ?>
+
         <section class="section">
             <div class="row">
                 <div class="col-lg-6">
@@ -155,7 +173,7 @@
                             <!-- Pilih Laporan -->
                             <div class="mb-3">
                                 <label class="form-label">Pilih Laporan</label>
-                                <select id="laporanSelect" class="form-select">
+                                <select id="laporanSelect" class="form-select" onchange="updateTipeLaporan()">
                                     <option value="" selected disabled>Pilih Laporan</option>
                                     <option value="produk">Produk</option>
                                     <option value="transaksi">Transaksi</option>
@@ -176,6 +194,62 @@
                 </div>
             </div>
         </section>
+
+        <script>
+            function updateTipeLaporan() {
+                const laporanSelect = document.getElementById("laporanSelect").value;
+                const tipeLaporanSelect = document.getElementById("tipeLaporanSelect");
+
+                tipeLaporanSelect.innerHTML = "";
+
+                if (laporanSelect === "produk") {
+                    let optionAll = document.createElement("option");
+                    optionAll.value = "all";
+                    optionAll.textContent = "All";
+                    tipeLaporanSelect.appendChild(optionAll);
+
+                    <?php if ($resultKategori->num_rows > 0) : ?>
+                        <?php while ($row = $resultKategori->fetch_assoc()) : ?>
+                            let option<?php echo $row['id_ktg']; ?> = document.createElement("option");
+                            option<?php echo $row['id_ktg']; ?>.value = "<?php echo $row['id_ktg']; ?>";
+                            option<?php echo $row['id_ktg']; ?>.textContent = "<?php echo $row['nm_ktg']; ?>";
+                            tipeLaporanSelect.appendChild(option<?php echo $row['id_ktg']; ?>);
+                        <?php endwhile; ?>
+                    <?php endif; ?>
+
+                } else if (laporanSelect === "transaksi") {
+                    let optionAll = document.createElement("option");
+                    optionAll.value = "all";
+                    optionAll.textContent = "All";
+                    tipeLaporanSelect.appendChild(optionAll);
+                }
+            }
+
+            document.getElementById("btnCetak").addEventListener("click", function() {
+                const laporan = document.getElementById("laporanSelect").value;
+                const tipe = document.getElementById("tipeLaporanSelect").value;
+
+                if (!laporan || !tipe) {
+                    alert("Silakan pilih jenis laporan dan tipe laporan terlebih dahulu.");
+                    return;
+                }
+
+                let url = "";
+
+                if (laporan === "produk") {
+                    if (tipe === "all") {
+                        url = "pdf_produk_all.php";
+                    } else {
+                        url = "pdf_produk_kategori.php?id_kategori=" + tipe;
+                    }
+                } else if (laporan === "transaksi") {
+                    url = "pdf_transaksi.php";
+                }
+
+                // Buka file PDF di tab baru
+                window.open(url, "_blank");
+            });
+        </script>
 
     </main><!-- End #main -->
 
