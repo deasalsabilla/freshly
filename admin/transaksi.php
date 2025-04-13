@@ -44,21 +44,8 @@
             <i class="bi bi-list toggle-sidebar-btn"></i>
         </div><!-- End Logo -->
 
-        <div class="search-bar">
-            <form class="search-form d-flex align-items-center" method="POST" action="#">
-                <input type="text" name="query" placeholder="Search" title="Enter search keyword">
-                <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-            </form>
-        </div><!-- End Search Bar -->
-
         <nav class="header-nav ms-auto">
             <ul class="d-flex align-items-center">
-
-                <li class="nav-item d-block d-lg-none">
-                    <a class="nav-link nav-icon search-bar-toggle " href="#">
-                        <i class="bi bi-search"></i>
-                    </a>
-                </li><!-- End Search Icon-->
 
                 <li class="nav-item dropdown">
                 <li class="nav-item dropdown pe-3">
@@ -159,16 +146,48 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
+                        <?php
+                        // Sertakan file koneksi
+                        include 'koneksi.php';
+
+                        // Ambil kategori dari database untuk dropdown filter
+                        $sql_kategori = "SELECT id_ktg, nm_ktg FROM tb_ktg";
+                        $result_kategori = $koneksi->query($sql_kategori);
+
+                        // Ambil kategori yang dipilih dari URL (jika ada)
+                        $kategori_filter = isset($_GET['kategori']) ? $_GET['kategori'] : "";
+
+                        // Query untuk mengambil data penjualan dengan filter kategori jika ada
+                        $sql = "SELECT j.id_jual, u.username, j.tgl_jual, j.total, j.diskon 
+        FROM tb_jual j 
+        JOIN tb_user u ON j.id_user = u.id_user";
+
+                        if (!empty($kategori_filter)) {
+                            // Jika kategori dipilih, filter berdasarkan kategori yang terkait dengan produk dalam tb_jualdtl
+                            $sql .= " JOIN tb_jualdtl jd ON j.id_jual = jd.id_jual
+              JOIN tb_produk p ON jd.id_produk = p.id_produk
+              WHERE p.id_ktg = '$kategori_filter'";
+                        }
+
+                        $sql .= " GROUP BY j.id_jual ORDER BY j.tgl_jual ASC"; // Mengelompokkan dan mengurutkan berdasarkan tanggal terbaru
+                        $result = $koneksi->query($sql);
+                        ?>
                         <div class="filter-bar mt-3">
                             <form class="filter-form d-flex align-items-center" method="GET" action="">
                                 <select name="kategori" class="form-select me-2" style="max-width: 200px;" title="Pilih kategori">
                                     <option value="">-- Semua Kategori --</option>
-                                    <option value="">Sayur</option>
-                                    <option value="">Buah</option>
+                                    <?php
+                                    if ($result_kategori->num_rows > 0) {
+                                        while ($row = $result_kategori->fetch_assoc()) {
+                                            $selected = ($kategori_filter == $row['id_ktg']) ? "selected" : "";
+                                            echo "<option value='" . $row['id_ktg'] . "' $selected>" . htmlspecialchars($row['nm_ktg']) . "</option>";
+                                        }
+                                    }
+                                    ?>
                                 </select>
                                 <button type="submit" class="btn btn-primary ms-2">Filter</button>
                             </form>
-                        </div>
+                        </div><!-- End Filter Bar -->
                     </div>
                 </div>
             </div>
@@ -193,6 +212,26 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <?php
+                                    $no = 1;
+                                    if ($result->num_rows > 0) {
+                                        while ($row = $result->fetch_assoc()) {
+                                            echo "<tr>";
+                                            echo "<td>" . $no++ . "</td>";
+                                            echo "<td>" . $row["id_jual"] . "</td>";
+                                            echo "<td>" . $row["username"] . "</td>";
+                                            echo "<td>" . date("d-m-Y H:i:s", strtotime($row["tgl_jual"])) . "</td>";
+                                            echo "<td>Rp " . number_format($row["total"], 0, ",", ".") . "</td>";
+                                            echo "<td>Rp " . number_format($row["diskon"], 0, ",", ".") . "</td>";
+                                            echo "<td>
+                                            <a href='detail_jual.php?id=" . $row["id_jual"] . "' class='btn btn-info btn-sm'>Detail</a>
+                                          </td>";
+                                            echo "</tr>";
+                                        }
+                                    } else {
+                                        echo "<tr><td colspan='7' class='text-center'>Belum ada data penjualan</td></tr>";
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                             <!-- End Table with stripped rows -->
