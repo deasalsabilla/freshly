@@ -153,27 +153,48 @@
                         <div class="card-body">
                             <h5 class="card-title">Lihat Detail Transaksi</h5>
                             <div class="table-responsive">
+                                <?php
+                                include 'koneksi.php'; // pastikan koneksi DB kamu benar
+
+                                $id_jual = $_GET['id']; // misalnya dari URL atau request
+
+                                // ambil data tb_jual
+                                $jual = mysqli_fetch_assoc(mysqli_query($koneksi, "
+    SELECT * FROM tb_jual tj 
+    JOIN tb_user tu ON tj.id_user = tu.id_user 
+    WHERE tj.id_jual = '$id_jual'
+"));
+
+                                // ambil data detail jual
+                                $detail = mysqli_query($koneksi, "
+    SELECT tjd.id_produk, tjd.qty, tjd.harga AS subtotal, tp.nm_produk, tp.harga AS harga_produk
+    FROM tb_jualdtl tjd 
+    JOIN tb_produk tp ON tjd.id_produk = tp.id_produk 
+    WHERE tjd.id_jual = '$id_jual'
+");
+                                ?>
+
                                 <table class="table table-striped mt-2">
                                     <tbody>
                                         <tr>
                                             <th>Kode Belanja</th>
-                                            <td>T001</td>
+                                            <td><?= $jual['id_jual'] ?></td>
                                         </tr>
                                         <tr>
                                             <th>Pengguna</th>
-                                            <td>afi</td>
+                                            <td><?= $jual['username'] ?></td>
                                         </tr>
                                         <tr>
                                             <th>Tanggal</th>
-                                            <td>04-04-2025 12:06:29</td>
+                                            <td><?= date('d-m-Y H:i:s', strtotime($jual['tgl_jual'])) ?></td>
                                         </tr>
                                         <tr>
                                             <th>Total Bayar</th>
-                                            <td>Rp. 32.000 </td>
+                                            <td>Rp <?= number_format($jual['total'], 0, ',', '.') ?></td>
                                         </tr>
                                         <tr>
                                             <th>Diskon</th>
-                                            <td>Rp. 0</td>
+                                            <td>Rp <?= number_format($jual['diskon'], 0, ',', '.') ?></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -190,15 +211,21 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <?php
+                                        $no = 1;
+                                        while ($d = mysqli_fetch_assoc($detail)) :
+                                        ?>
                                             <tr>
-                                                <td>1</td>
-                                                <td>Alpukat</td>
-                                                <td>Rp. 18.000</td>
-                                                <td>2</td>
-                                                <td>Rp. 32.000</td>
+                                                <td><?= $no++ ?></td>
+                                                <td><?= $d['nm_produk'] ?></td>
+                                                <td>Rp <?= number_format($d['harga_produk'], 0, ',', '.') ?></td>
+                                                <td><?= $d['qty'] ?></td>
+                                                <td>Rp <?= number_format($d['subtotal'], 0, ',', '.') ?></td>
                                             </tr>
+                                        <?php endwhile; ?>
                                     </tbody>
                                 </table>
+
                             </div>
                             <a href="transaksi.php" class="btn btn-secondary">Kembali</a>
                         </div>
