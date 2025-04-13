@@ -150,7 +150,7 @@
                         include 'koneksi.php';
 
                         // Ambil data kategori
-                        $sql_kategori = "SELECT id_kategori, nm_kategori FROM tb_kategori";
+                        $sql_kategori = "SELECT id_ktg, nm_ktg FROM tb_ktg";
                         $result_kategori = $koneksi->query($sql_kategori);
 
                         // Tangkap filter kategori dari GET
@@ -163,8 +163,8 @@
                                     <?php
                                     if ($result_kategori->num_rows > 0) {
                                         while ($row = $result_kategori->fetch_assoc()) {
-                                            $selected = ($filter_kategori == $row['id_kategori']) ? "selected" : "";
-                                            echo "<option value='" . $row['id_kategori'] . "' $selected>" . htmlspecialchars($row['nm_kategori']) . "</option>";
+                                            $selected = ($filter_kategori == $row['id_ktg']) ? "selected" : "";
+                                            echo "<option value='" . $row['id_ktg'] . "' $selected>" . htmlspecialchars($row['nm_ktg']) . "</option>";
                                         }
                                     }
                                     ?>
