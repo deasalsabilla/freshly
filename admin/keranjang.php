@@ -44,21 +44,8 @@
             <i class="bi bi-list toggle-sidebar-btn"></i>
         </div><!-- End Logo -->
 
-        <div class="search-bar">
-            <form class="search-form d-flex align-items-center" method="POST" action="#">
-                <input type="text" name="query" placeholder="Search" title="Enter search keyword">
-                <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-            </form>
-        </div><!-- End Search Bar -->
-
         <nav class="header-nav ms-auto">
             <ul class="d-flex align-items-center">
-
-                <li class="nav-item d-block d-lg-none">
-                    <a class="nav-link nav-icon search-bar-toggle " href="#">
-                        <i class="bi bi-search"></i>
-                    </a>
-                </li><!-- End Search Icon-->
 
                 <li class="nav-item dropdown">
                 <li class="nav-item dropdown pe-3">
@@ -159,16 +146,33 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
+                        <?php
+                        include 'koneksi.php';
+
+                        // Ambil data kategori
+                        $sql_kategori = "SELECT id_kategori, nm_kategori FROM tb_kategori";
+                        $result_kategori = $koneksi->query($sql_kategori);
+
+                        // Tangkap filter kategori dari GET
+                        $filter_kategori = isset($_GET['kategori']) ? $_GET['kategori'] : '';
+                        ?>
                         <div class="filter-bar mt-3">
                             <form class="filter-form d-flex align-items-center" method="GET" action="">
                                 <select name="kategori" class="form-select me-2" style="max-width: 200px;" title="Pilih kategori">
                                     <option value="">-- Semua Kategori --</option>
-                                    <option value="">Sayur</option>
-                                    <option value="">Buah</option>
+                                    <?php
+                                    if ($result_kategori->num_rows > 0) {
+                                        while ($row = $result_kategori->fetch_assoc()) {
+                                            $selected = ($filter_kategori == $row['id_kategori']) ? "selected" : "";
+                                            echo "<option value='" . $row['id_kategori'] . "' $selected>" . htmlspecialchars($row['nm_kategori']) . "</option>";
+                                        }
+                                    }
+                                    ?>
                                 </select>
                                 <button type="submit" class="btn btn-primary ms-2">Filter</button>
                             </form>
-                        </div>
+                        </div><!-- End Filter Bar -->
+
                     </div>
                 </div>
             </div>
@@ -180,6 +184,24 @@
                     <div class="card">
                         <div class="card-body">
                             <!-- Table with stripped rows -->
+                            <?php
+                            include 'koneksi.php';
+
+                            // Query untuk mengambil data pesanan dengan join ke produk dan kategori
+                            $sql = "SELECT p.id_pesanan, p.id_produk, p.qty, p.total, u.username 
+                            FROM tb_pesanan p
+                            JOIN tb_user u ON p.id_user = u.id_user
+                            JOIN tb_produk pr ON p.id_produk = pr.id_produk
+                            JOIN tb_ktg k ON pr.id_ktg = k.id_ktg";
+
+                            // Tambahkan filter kategori jika dipilih
+                            if (!empty($filter_kategori)) {
+                                $sql .= " WHERE k.id_ktg = '$filter_kategori'";
+                            }
+
+                            $result = $koneksi->query($sql);
+                            ?>
+
                             <table class="table table-striped mt-2">
                                 <thead>
                                     <tr>
@@ -192,6 +214,23 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <?php
+                                    $no = 1;
+                                    if ($result->num_rows > 0) {
+                                        while ($row = $result->fetch_assoc()) {
+                                            echo "<tr>";
+                                            echo "<td>" . $no++ . "</td>";
+                                            echo "<td>" . $row["id_pesanan"] . "</td>";
+                                            echo "<td>" . $row["id_produk"] . "</td>";
+                                            echo "<td>" . $row["qty"] . "</td>";
+                                            echo "<td>Rp " . number_format($row["total"], 0, ",", ".") . "</td>";
+                                            echo "<td>" . $row["username"] . "</td>";
+                                            echo "</tr>";
+                                        }
+                                    } else {
+                                        echo "<tr><td colspan='6' class='text-center'>Belum ada data pesanan</td></tr>";
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                             <!-- End Table with stripped rows -->
