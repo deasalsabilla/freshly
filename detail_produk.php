@@ -122,6 +122,16 @@ if (isset($_POST['add_to_cart'])) {
         .logout-list li a:hover {
             background-color: #f2f2f2;
         }
+
+        .square-image {
+            width: 270px;
+            height: 270px;
+            object-fit: cover;
+            /* Crop gambar agar isi tetap rapi */
+            object-position: center;
+            border-radius: 8px;
+            /* opsional, biar lebih halus */
+        }
     </style>
 </head>
 
@@ -323,7 +333,7 @@ if (isset($_POST['add_to_cart'])) {
                                 </div>
                             </div>
                             <div class="buttons">
-                                <button type="submit" class="btn add-to-cart-btn" name="add_to_cart">Keranjang</button>
+                                <button type="submit" class="btn add-to-cart-btn" name="add_to_cart">Add to cart</button>
                                 <p class="pull-row">
                                     <a href="#" class="btn wishlist-btn">wishlist</a>
                                     <a href="#" class="btn compare-btn">compare</a>
@@ -382,7 +392,7 @@ if (isset($_POST['add_to_cart'])) {
                                 <div class="contain-product layout-default">
                                     <div class="product-thumb">
                                         <a href="detail_produk.php?id=<?= $produk_lain['id_produk']; ?>" class="link-to-product">
-                                            <img src="admin/produk_img/<?= $produk_lain['gambar']; ?>" alt="<?= $produk_lain['nm_produk']; ?>" width="270" height="270" class="product-thumnail">
+                                            <img src="admin/produk_img/<?= $produk_lain['gambar']; ?>" alt="<?= $produk_lain['nm_produk']; ?>" width="270" height="270" class="product-thumbnail square-image">
                                         </a>
                                     </div>
                                     <div class="info">
