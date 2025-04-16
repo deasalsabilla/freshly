@@ -500,8 +500,8 @@ session_start();
                     </div>
                     <div class="col-lg-9 col-md-8 padding-top-2px">
                         <div class="header-search-bar layout-01">
-                            <form action="#" class="form-search" name="desktop-seacrh" method="get">
-                                <input type="text" name="s" class="input-text" value="" placeholder="Search here...">
+                            <form action="" class="form-search" name="desktop-search" method="get">
+                                <input type="text" name="s" class="input-text" value="<?php echo isset($_GET['s']) ? htmlspecialchars($_GET['s']) : ''; ?>" placeholder="Search here...">
                                 <button type="submit" class="btn-submit"><i class="biolife-icon icon-search"></i></button>
                             </form>
                         </div>
@@ -549,17 +549,29 @@ session_start();
                         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
                         $start = ($page - 1) * $limit;
 
-                        // Query ambil data produk dengan limit
-                        $query = "SELECT p.*, k.nm_ktg FROM tb_produk p 
-          JOIN tb_ktg k ON p.id_ktg = k.id_ktg 
-          ORDER BY p.id_produk ASC 
-          LIMIT $start, $limit";
+                        // Ambil keyword pencarian
+                        $search = isset($_GET['s']) ? mysqli_real_escape_string($koneksi, $_GET['s']) : '';
 
-                        $result = mysqli_query($koneksi, $query);
+                        // Query data produk (dengan pencarian jika ada)
+                        $where = '';
+                        if (!empty($search)) {
+                            $where = "WHERE p.nm_produk LIKE '%$search%' OR p.ket LIKE '%$search%'";
+                        }
 
                         // Hitung total produk
-                        $total_produk = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM tb_produk"));
+                        $total_query = "SELECT COUNT(*) AS total FROM tb_produk p $where";
+                        $total_result = mysqli_query($koneksi, $total_query);
+                        $total_row = mysqli_fetch_assoc($total_result);
+                        $total_produk = $total_row['total'];
                         $total_pages = ceil($total_produk / $limit);
+
+                        // Query ambil data produk
+                        $query = "SELECT p.*, k.nm_ktg FROM tb_produk p 
+                                  JOIN tb_ktg k ON p.id_ktg = k.id_ktg 
+                                  $where 
+                                  ORDER BY p.id_produk ASC 
+                                  LIMIT $start, $limit";
+                        $result = mysqli_query($koneksi, $query);
                         ?>
 
                         <div class="row">
@@ -621,8 +633,16 @@ session_start();
 
                         <div class="biolife-panigations-block">
                             <ul class="panigation-contain">
-                                <?php if ($page > 1) : ?>
-                                    <li><a href="?page=<?php echo $page - 1; ?>" class="link-page prev"><i class="fa fa-angle-left" aria-hidden="true"></i></a></li>
+                                <?php
+                                // Ambil keyword jika ada
+                                $search_query = !empty($search) ? '&s=' . urlencode($search) : '';
+
+                                if ($page > 1) : ?>
+                                    <li>
+                                        <a href="?page=<?php echo $page - 1 . $search_query; ?>" class="link-page prev">
+                                            <i class="fa fa-angle-left" aria-hidden="true"></i>
+                                        </a>
+                                    </li>
                                 <?php endif; ?>
 
                                 <?php for ($i = 1; $i <= $total_pages; $i++) : ?>
@@ -630,18 +650,20 @@ session_start();
                                         <?php if ($i == $page) : ?>
                                             <span class="current-page"><?php echo $i; ?></span>
                                         <?php else : ?>
-                                            <a href="?page=<?php echo $i; ?>" class="link-page"><?php echo $i; ?></a>
+                                            <a href="?page=<?php echo $i . $search_query; ?>" class="link-page"><?php echo $i; ?></a>
                                         <?php endif; ?>
                                     </li>
                                 <?php endfor; ?>
 
                                 <?php if ($page < $total_pages) : ?>
-                                    <li><a href="?page=<?php echo $page + 1; ?>" class="link-page next"><i class="fa fa-angle-right" aria-hidden="true"></i></a></li>
+                                    <li>
+                                        <a href="?page=<?php echo $page + 1 . $search_query; ?>" class="link-page next">
+                                            <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                        </a>
+                                    </li>
                                 <?php endif; ?>
                             </ul>
                         </div>
-
-
                     </div>
 
                 </div>
