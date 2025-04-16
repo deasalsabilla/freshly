@@ -143,6 +143,12 @@ if (isset($_POST['add_to_cart'])) {
             display: block;
             margin: 0 auto;
         }
+
+        .add-to-cart-btn {
+            width: 100%;
+            display: block;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 
@@ -344,7 +350,7 @@ if (isset($_POST['add_to_cart'])) {
                                 </div>
                             </div>
                             <div class="buttons">
-                                <button type="submit" class="btn add-to-cart-btn" name="add_to_cart">Add to cart</button>
+                                <button type="submit" class="btn add-to-cart-btn" name="add_to_cart">Keranjang</button>
                                 <p class="pull-row">
                                     <a href="#" class="btn wishlist-btn">wishlist</a>
                                     <a href="#" class="btn compare-btn">compare</a>
