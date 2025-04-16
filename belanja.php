@@ -60,6 +60,22 @@ session_start();
         .logout-list li a:hover {
             background-color: #f2f2f2;
         }
+
+        .img-wrapper {
+            width: 370px;
+            height: 370px;
+            overflow: hidden;
+            border-radius: 10px;
+            /* opsional, biar lebih halus */
+        }
+
+        .square-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
     </style>
 </head>
 
@@ -581,7 +597,11 @@ session_start();
                                         <div class="contain-product pr-detail-layout">
                                             <div class="product-thumb">
                                                 <a href="detail_produk.php?id=<?php echo $data['id_produk']; ?>" class="link-to-product">
-                                                    <img src="admin/produk_img/<?php echo $data['gambar']; ?>" alt="<?php echo $data['nama_produk']; ?>" width="270" height="270" class="product-thumnail">
+                                                    <div class="img-wrapper">
+                                                        <img src="admin/produk_img/<?php echo $data['gambar']; ?>"
+                                                            alt="<?php echo $data['nama_produk']; ?>"
+                                                            class="square-img">
+                                                    </div>
                                                 </a>
                                             </div>
                                             <div class="info">

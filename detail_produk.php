@@ -132,6 +132,17 @@ if (isset($_POST['add_to_cart'])) {
             border-radius: 8px;
             /* opsional, biar lebih halus */
         }
+
+        .square-detail-img {
+            width: 500px;
+            height: 500px;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 10px;
+            /* opsional untuk sudut melengkung */
+            display: block;
+            margin: 0 auto;
+        }
     </style>
 </head>
 
@@ -309,7 +320,7 @@ if (isset($_POST['add_to_cart'])) {
                 <div class="sumary-product single-layout">
                     <div class="media">
                         <ul class="biolife-carousel slider-for" data-slick='{"arrows":false,"dots":false,"slidesMargin":30,"slidesToShow":1,"slidesToScroll":1,"fade":true,"asNavFor":".slider-nav"}'>
-                            <li><img src="admin/produk_img/<?php echo $produk['gambar']; ?>" alt="" width="500" height="500"></li>
+                            <li><img src="admin/produk_img/<?php echo $produk['gambar']; ?>" alt="" class="square-detail-img"></li>
                         </ul>
                     </div>
                     <div class="product-attribute">
@@ -392,7 +403,7 @@ if (isset($_POST['add_to_cart'])) {
                                 <div class="contain-product layout-default">
                                     <div class="product-thumb">
                                         <a href="detail_produk.php?id=<?= $produk_lain['id_produk']; ?>" class="link-to-product">
-                                            <img src="admin/produk_img/<?= $produk_lain['gambar']; ?>" alt="<?= $produk_lain['nm_produk']; ?>" width="270" height="270" class="product-thumbnail square-image">
+                                            <img src="admin/produk_img/<?= $produk_lain['gambar']; ?>" alt="<?= $produk_lain['nm_produk']; ?>" class="product-thumbnail square-image">
                                         </a>
                                     </div>
                                     <div class="info">
