@@ -402,161 +402,49 @@ session_start();
                     <div class="biolife-tab biolife-tab-contain sm-margin-top-34px">
                         <div class="tab-content">
                             <div id="tab01_1st" class="tab-contain active">
+                                <?php
+                                include "admin/koneksi.php"; // koneksi ke database
+
+                                // Query untuk join tb_produk dan tb_ktg, mengambil 8 data acak
+                                $query = "
+    SELECT p.*, k.nm_ktg 
+    FROM tb_produk p 
+    JOIN tb_ktg k ON p.id_ktg = k.id_ktg 
+    ORDER BY RAND() 
+    LIMIT 8
+";
+                                $result = mysqli_query($koneksi, $query);
+                                ?>
+
                                 <ul class="products-list biolife-carousel nav-center-02 nav-none-on-mobile eq-height-contain" data-slick='{"rows":2 ,"arrows":true,"dots":false,"infinite":true,"speed":400,"slidesMargin":10,"slidesToShow":4, "responsive":[{"breakpoint":1200, "settings":{ "slidesToShow": 4}},{"breakpoint":992, "settings":{ "slidesToShow": 3, "slidesMargin":25 }},{"breakpoint":768, "settings":{ "slidesToShow": 2, "slidesMargin":15}}]}'>
-                                    <li class="product-item">
-                                        <div class="contain-product layout-default">
-                                            <div class="product-thumb">
-                                                <a href="#" class="link-to-product">
-                                                    <img src="assets/images/products/p-05.jpg" alt="Vegetables" width="270" height="270" class="product-thumnail">
-                                                </a>
-                                            </div>
-                                            <div class="info">
-                                                <b class="categories">Buah</b>
-                                                <h4 class="product-title"><a href="#" class="pr-name">Alpukat</a></h4>
-                                                <div class="price ">
-                                                    <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>18.000</span></ins>
+                                    <?php while ($row = mysqli_fetch_assoc($result)) : ?>
+                                        <li class="product-item">
+                                            <div class="contain-product layout-default">
+                                                <div class="product-thumb">
+                                                    <a href="detail_produk.php?id=<?= $row['id_produk'] ?>" class="link-to-product">
+                                                        <img src="admin/produk_img/<?= $row['gambar'] ?>" alt="<?= $row['nm_produk'] ?>" width="270" height="270" class="product-thumnail">
+                                                    </a>
                                                 </div>
-                                                <div class="slide-down-box">
-                                                    <p class="message">Produk lokal dari Malang</p>
-                                                    <div class="buttons">
-                                                        <a href="#" class="btn add-to-cart-btn"><i class="fa fa-cart-arrow-down" aria-hidden="true"></i>Keranjang</a>
+                                                <div class="info">
+                                                    <b class="categories"><?= $row['nm_ktg'] ?></b>
+                                                    <h4 class="product-title">
+                                                        <a href="detail_produk.php?id=<?= $row['id_produk'] ?>" class="pr-name"><?= $row['nm_produk'] ?></a>
+                                                    </h4>
+                                                    <div class="price">
+                                                        <ins><span class="price-amount"><span class="currencySymbol">Rp.</span><?= number_format($row['harga'], 0, ',', '.') ?></span></ins>
+                                                    </div>
+                                                    <div class="slide-down-box">
+                                                        <p class="message"><?= $row['ket'] ?></p>
+                                                        <div class="buttons">
+                                                            <a href="detail_produk.php?id=<?= $row['id_produk'] ?>" class="btn add-to-cart-btn">
+                                                                <i class="fa fa-cart-arrow-down" aria-hidden="true"></i>Keranjang
+                                                            </a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </li>
-                                    <li class="product-item">
-                                        <div class="contain-product layout-default">
-                                            <div class="product-thumb">
-                                                <a href="#" class="link-to-product">
-                                                    <img src="assets/images/products/p-05.jpg" alt="Vegetables" width="270" height="270" class="product-thumnail">
-                                                </a>
-                                            </div>
-                                            <div class="info">
-                                                <b class="categories">Buah</b>
-                                                <h4 class="product-title"><a href="#" class="pr-name">Alpukat</a></h4>
-                                                <div class="price ">
-                                                    <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>18.000</span></ins>
-                                                </div>
-                                                <div class="slide-down-box">
-                                                    <p class="message">Produk lokal dari Malang</p>
-                                                    <div class="buttons">
-                                                        <a href="#" class="btn add-to-cart-btn"><i class="fa fa-cart-arrow-down" aria-hidden="true"></i>Keranjang</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="product-item">
-                                        <div class="contain-product layout-default">
-                                            <div class="product-thumb">
-                                                <a href="#" class="link-to-product">
-                                                    <img src="assets/images/products/p-05.jpg" alt="Vegetables" width="270" height="270" class="product-thumnail">
-                                                </a>
-                                            </div>
-                                            <div class="info">
-                                                <b class="categories">Buah</b>
-                                                <h4 class="product-title"><a href="#" class="pr-name">Alpukat</a></h4>
-                                                <div class="price ">
-                                                    <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>18.000</span></ins>
-                                                </div>
-                                                <div class="slide-down-box">
-                                                    <p class="message">Produk lokal dari Malang</p>
-                                                    <div class="buttons">
-                                                        <a href="#" class="btn add-to-cart-btn"><i class="fa fa-cart-arrow-down" aria-hidden="true"></i>Keranjang</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="product-item">
-                                        <div class="contain-product layout-default">
-                                            <div class="product-thumb">
-                                                <a href="#" class="link-to-product">
-                                                    <img src="assets/images/products/p-05.jpg" alt="Vegetables" width="270" height="270" class="product-thumnail">
-                                                </a>
-                                            </div>
-                                            <div class="info">
-                                                <b class="categories">Buah</b>
-                                                <h4 class="product-title"><a href="#" class="pr-name">Alpukat</a></h4>
-                                                <div class="price ">
-                                                    <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>18.000</span></ins>
-                                                </div>
-                                                <div class="slide-down-box">
-                                                    <p class="message">Produk lokal dari Malang</p>
-                                                    <div class="buttons">
-                                                        <a href="#" class="btn add-to-cart-btn"><i class="fa fa-cart-arrow-down" aria-hidden="true"></i>Keranjang</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="product-item">
-                                        <div class="contain-product layout-default">
-                                            <div class="product-thumb">
-                                                <a href="#" class="link-to-product">
-                                                    <img src="assets/images/products/p-05.jpg" alt="Vegetables" width="270" height="270" class="product-thumnail">
-                                                </a>
-                                            </div>
-                                            <div class="info">
-                                                <b class="categories">Buah</b>
-                                                <h4 class="product-title"><a href="#" class="pr-name">Alpukat</a></h4>
-                                                <div class="price ">
-                                                    <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>18.000</span></ins>
-                                                </div>
-                                                <div class="slide-down-box">
-                                                    <p class="message">Produk lokal dari Malang</p>
-                                                    <div class="buttons">
-                                                        <a href="#" class="btn add-to-cart-btn"><i class="fa fa-cart-arrow-down" aria-hidden="true"></i>Keranjang</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="product-item">
-                                        <div class="contain-product layout-default">
-                                            <div class="product-thumb">
-                                                <a href="#" class="link-to-product">
-                                                    <img src="assets/images/products/p-05.jpg" alt="Vegetables" width="270" height="270" class="product-thumnail">
-                                                </a>
-                                            </div>
-                                            <div class="info">
-                                                <b class="categories">Buah</b>
-                                                <h4 class="product-title"><a href="#" class="pr-name">Alpukat</a></h4>
-                                                <div class="price ">
-                                                    <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>18.000</span></ins>
-                                                </div>
-                                                <div class="slide-down-box">
-                                                    <p class="message">Produk lokal dari Malang</p>
-                                                    <div class="buttons">
-                                                        <a href="#" class="btn add-to-cart-btn"><i class="fa fa-cart-arrow-down" aria-hidden="true"></i>Keranjang</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="product-item">
-                                        <div class="contain-product layout-default">
-                                            <div class="product-thumb">
-                                                <a href="#" class="link-to-product">
-                                                    <img src="assets/images/products/p-05.jpg" alt="Vegetables" width="270" height="270" class="product-thumnail">
-                                                </a>
-                                            </div>
-                                            <div class="info">
-                                                <b class="categories">Buah</b>
-                                                <h4 class="product-title"><a href="#" class="pr-name">Alpukat</a></h4>
-                                                <div class="price ">
-                                                    <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>18.000</span></ins>
-                                                </div>
-                                                <div class="slide-down-box">
-                                                    <p class="message">Produk lokal dari Malang</p>
-                                                    <div class="buttons">
-                                                        <a href="#" class="btn add-to-cart-btn"><i class="fa fa-cart-arrow-down" aria-hidden="true"></i>Keranjang</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
+                                        </li>
+                                    <?php endwhile; ?>
                                 </ul>
                             </div>
                         </div>
@@ -642,7 +530,7 @@ session_start();
                                                 </div>
                                                 <b class="categories">Buah Segar</b>
                                                 <h4 class="product-title"><a href="#" class="pr-name">Segar Nasional
-                                                Buah</a></h4>
+                                                        Buah</a></h4>
                                                 <div class="price ">
                                                     <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>20.000</span></ins>
                                                 </div>
@@ -670,7 +558,7 @@ session_start();
                                                 </div>
                                                 <b class="categories">Buah Segar</b>
                                                 <h4 class="product-title"><a href="#" class="pr-name">Segar Nasional
-                                                Buah</a></h4>
+                                                        Buah</a></h4>
                                                 <div class="price ">
                                                     <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>20.000</span></ins>
                                                 </div>
@@ -698,7 +586,7 @@ session_start();
                                                 </div>
                                                 <b class="categories">Buah Segar</b>
                                                 <h4 class="product-title"><a href="#" class="pr-name">Segar Nasional
-                                                Buah</a></h4>
+                                                        Buah</a></h4>
                                                 <div class="price ">
                                                     <ins><span class="price-amount"><span class="currencySymbol">Rp.</span>20.000</span></ins>
                                                 </div>
