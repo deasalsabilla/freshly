@@ -60,6 +60,27 @@ session_start();
         .logout-list li a:hover {
             background-color: #f2f2f2;
         }
+        
+        .square-image {
+            width: 270px;
+            height: 270px;
+            object-fit: cover;
+            /* Crop gambar agar isi tetap rapi */
+            object-position: center;
+            border-radius: 8px;
+            /* opsional, biar lebih halus */
+        }
+
+        .square-detail-img {
+            width: 500px;
+            height: 500px;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 10px;
+            /* opsional untuk sudut melengkung */
+            display: block;
+            margin: 0 auto;
+        }
     </style>
 
 </head>
@@ -422,7 +443,7 @@ session_start();
                                             <div class="contain-product layout-default">
                                                 <div class="product-thumb">
                                                     <a href="detail_produk.php?id=<?= $row['id_produk'] ?>" class="link-to-product">
-                                                        <img src="admin/produk_img/<?= $row['gambar'] ?>" alt="<?= $row['nm_produk'] ?>" width="270" height="270" class="product-thumnail">
+                                                        <img src="admin/produk_img/<?= $row['gambar'] ?>" alt="<?= $row['nm_produk'] ?>" class="product-thumbnail square-image">
                                                     </a>
                                                 </div>
                                                 <div class="info">
