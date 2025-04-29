@@ -35,7 +35,6 @@ if (isset($_POST['simpan'])) {
 }
 
 ?>
-?>
 
 <!DOCTYPE html>
 <html lang="en">
