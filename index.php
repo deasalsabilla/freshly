@@ -427,17 +427,11 @@ session_start();
                                 include "admin/koneksi.php"; // koneksi ke database
 
                                 // Query untuk join tb_produk dan tb_ktg, mengambil 8 data acak
-                                $query = "
-    SELECT p.*, k.nm_ktg 
-    FROM tb_produk p 
-    JOIN tb_ktg k ON p.id_ktg = k.id_ktg 
-    ORDER BY RAND() 
-    LIMIT 8
-";
+                                $query = "SELECT p.*, k.nm_ktg FROM tb_produk p JOIN tb_ktg k ON p.id_ktg = k.id_ktg ORDER BY RAND() LIMIT 8";
                                 $result = mysqli_query($koneksi, $query);
                                 ?>
 
-                                <ul class="products-list biolife-carousel nav-center-02 nav-none-on-mobile eq-height-contain" data-slick='{"rows":2 ,"arrows":true,"dots":false,"infinite":true,"speed":400,"slidesMargin":10,"slidesToShow":4, "responsive":[{"breakpoint":1200, "settings":{ "slidesToShow": 4}},{"breakpoint":992, "settings":{ "slidesToShow": 3, "slidesMargin":25 }},{"breakpoint":768, "settings":{ "slidesToShow": 2, "slidesMargin":15}}]}'>
+                                <ul class="products-list biolife-carousel nav-center-02 nav-none-on-mobile eq-height-contain" data-slick='{"arrows":true,"dots":false,"infinite":true,"speed":400,"slidesMargin":10,"slidesToShow":4, "responsive":[{"breakpoint":1200, "settings":{ "slidesToShow": 4}},{"breakpoint":992, "settings":{ "slidesToShow": 3, "slidesMargin":25 }},{"breakpoint":768, "settings":{ "slidesToShow": 2, "slidesMargin":15}}]}'>
                                     <?php while ($row = mysqli_fetch_assoc($result)) : ?>
                                         <li class="product-item">
                                             <div class="contain-product layout-default">
