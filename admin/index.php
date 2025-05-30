@@ -179,7 +179,7 @@ if (!isset($_SESSION["status"]) || $_SESSION["status"] !== "admin") {
             <div class="col-12">
               <div class="card info-card customers-card shadow-sm w-100">
                 <div class="card-body text-center py-4">
-                  <h4 class="mb-2">Selamat datang di Website Admin <strong>Furnimart!</strong></h4>
+                  <h4 class="mb-2">Selamat datang di Website Admin <strong>Freshly.id!</strong></h4>
                   <p class="text-muted small mb-0">Kelola produk, transaksi, dan pelanggan dengan mudah.</p>
                 </div>
               </div>
